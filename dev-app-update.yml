@@ -1,0 +1,5 @@
+provider: github
+private: false
+owner: baha96
+repo: gos24-app-build
+token: 14de6ea2f1ea797157fc97318d8733e8003d80c2
