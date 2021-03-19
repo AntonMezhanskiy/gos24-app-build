@@ -9,6 +9,7 @@
       "provider": "github",
       "owner": "baha96",
       "private": true,
+      "repo": "gos24-app-build",
       "token": "16ae74c5a4ccd427e244f545d93bbf6e5f04f8d7"
     }
   ],
@@ -39,4 +40,4 @@
   "linux": {
     "icon": "icons"
   }
-},
+}

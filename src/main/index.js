@@ -1,7 +1,9 @@
 'use strict';
 /* eslint-disable */
 // eslint-disable-next-line no-unused-vars
-import {app, BrowserWindow, ipcMain, Notification, Tray, Menu} from 'electron'
+import {app, BrowserWindow, ipcMain, Notification, Tray, Menu, dialog} from 'electron'
+import { autoUpdater } from 'electron-updater'
+import logger from 'electron-log'
 const path = require('path');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -70,7 +72,8 @@ function createWindow () {
     minimizable: false,
     icon: path.join(__static, 'icons/icon1.ico'),
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      defaultEncoding: 'UTF-8'
     }
   });
 
@@ -107,3 +110,37 @@ function createWindow () {
 }
 
 app.on('ready', createWindow);
+
+autoUpdater.channel = 'latest';
+autoUpdater.allowDowngrade = false;
+
+autoUpdater.logger = logger;
+autoUpdater.logger.transports.file.level = 'silly';
+autoUpdater.logger.transports.file.appName = 'private repo';
+autoUpdater.autoDownload = true;
+
+autoUpdater.on('update-downloaded', () => {
+  dialog.showMessageBox({
+    message: 'update Downloaded !!'
+  })
+});
+
+autoUpdater.on('checking-for-update', () => {
+  dialog.showMessageBox({
+    message: 'CHECKING FOR UPDATES !!'
+  })
+});
+
+autoUpdater.on('update-available', () => {
+  dialog.showMessageBox({
+    message: ' update-available !!'
+  })
+});
+
+autoUpdater.on('error', (error) => {
+  autoUpdater.logger.debug(error)
+});
+
+app.on('ready', () => {
+  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
+});
