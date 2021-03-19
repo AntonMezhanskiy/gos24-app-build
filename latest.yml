@@ -1,8 +1,0 @@
-version: 0.171.4
-files:
-  - url: gos24-electron-setup-0.171.4.exe
-    sha512: x92CBxrc+bbqRsNStZymV15Kj8OV4RYRuP7ZGQEs1j5HvDMLDc37wkL0j36g+eLJxUPosUe5jSCcP3dnwK7Q+A==
-    size: 38109192
-path: gos24-electron-setup-0.171.4.exe
-sha512: x92CBxrc+bbqRsNStZymV15Kj8OV4RYRuP7ZGQEs1j5HvDMLDc37wkL0j36g+eLJxUPosUe5jSCcP3dnwK7Q+A==
-releaseDate: '2021-03-19T16:37:20.157Z'
