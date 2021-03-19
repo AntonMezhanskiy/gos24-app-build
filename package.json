@@ -1,8 +1,12 @@
 {
   "name": "gos24-electron",
-  "version": "0.171.5",
+  "version": "0.171.6",
   "author": "baha96 <baha96.dev@gmail.com>",
   "description": "An electron-vue project",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/baha96/gos24-app-build.git"
+  },
   "license": null,
   "private": false,
   "main": "./dist/electron/main.js",
@@ -11,6 +15,7 @@
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
+    "publish": "build --win -p always",
     "dev": "node .electron-vue/dev-runner.js",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
     "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src",

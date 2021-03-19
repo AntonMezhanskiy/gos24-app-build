@@ -6,9 +6,9 @@
   },
   "publish": [
     {
+      "private": true,
       "provider": "github",
       "owner": "baha96",
-      "private": true,
       "repo": "gos24-app-build",
       "token": "16ae74c5a4ccd427e244f545d93bbf6e5f04f8d7"
     }
@@ -16,6 +16,27 @@
   "files": [
     "dist/electron/**/*"
   ],
+  "mac": {
+    "icon": "icons/icon.icns"
+  },
+  "win": {
+    "icon": "icons/icon1.ico",
+    "publish": [
+      "github"
+    ],
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64",
+          "ia32"
+        ]
+      }
+    ]
+  },
+  "linux": {
+    "icon": "icons"
+  },
   "dmg": {
     "contents": [
       {
@@ -30,14 +51,5 @@
         "type": "file"
       }
     ]
-  },
-  "mac": {
-    "icon": "icons/icon.icns"
-  },
-  "win": {
-    "icon": "icons/icon1.ico"
-  },
-  "linux": {
-    "icon": "icons"
   }
 }
