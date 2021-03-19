@@ -142,5 +142,5 @@ autoUpdater.on('error', (error) => {
 });
 
 app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
+  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdatesAndNotify()
 });
