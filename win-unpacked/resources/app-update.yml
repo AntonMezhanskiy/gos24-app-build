@@ -1,0 +1,5 @@
+owner: baha96
+repo: gos24-app-build
+provider: github
+private: false
+updaterCacheDirName: gos24-electron-updater
