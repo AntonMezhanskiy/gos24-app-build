@@ -111,36 +111,77 @@ function createWindow () {
 
 app.on('ready', createWindow);
 
-autoUpdater.channel = 'latest';
-autoUpdater.allowDowngrade = false;
-
 autoUpdater.logger = logger;
-autoUpdater.logger.transports.file.level = 'silly';
-autoUpdater.logger.transports.file.appName = 'private repo';
-autoUpdater.autoDownload = true;
+autoUpdater.logger.transports.file.level = 'info';
+logger.info('App starting...');
 
-autoUpdater.on('update-downloaded', () => {
-  dialog.showMessageBox({
-    message: 'update Downloaded !!'
-  })
-});
+// function sendStatusToWindow(text) {
+//   logger.info(text);
+//   mainWindow.webContents.send('message', text);
+// }
+// autoUpdater.on('checking-for-update', () => {
+//   sendStatusToWindow('Checking for update...');
+// });
+// autoUpdater.on('update-available', (info) => {
+//   sendStatusToWindow('Update available.');
+// });
+// autoUpdater.on('update-not-available', (info) => {
+//   sendStatusToWindow('Update not available.');
+// });
+// autoUpdater.on('error', (err) => {
+//   sendStatusToWindow('Error in auto-updater. ' + err);
+// });
+// autoUpdater.on('download-progress', (progressObj) => {
+//   let log_message = "Download speed: " + progressObj.bytesPerSecond;
+//   log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+//   log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+//   sendStatusToWindow(log_message);
+// });
+// autoUpdater.on('update-downloaded', (info) => {
+//   sendStatusToWindow('Update downloaded');
+// });
+let updater;
+autoUpdater.autoDownload = false;
 
-autoUpdater.on('checking-for-update', () => {
-  dialog.showMessageBox({
-    message: 'CHECKING FOR UPDATES !!'
-  })
+autoUpdater.on('error', (error) => {
+  dialog.showErrorBox('Error: ', error == null ? "unknown" : (error.stack || error).toString())
 });
 
 autoUpdater.on('update-available', () => {
   dialog.showMessageBox({
-    message: ' update-available !!'
+    type: 'info',
+    title: 'Found Updates',
+    message: 'Found updates, do you want update now?',
+    buttons: ['Sure', 'No']
+  }, (buttonIndex) => {
+    if (buttonIndex === 0) {
+      autoUpdater.downloadUpdate()
+    }
+    else {
+      updater.enabled = true;
+      updater = null
+    }
   })
 });
 
-autoUpdater.on('error', (error) => {
-  autoUpdater.logger.debug(error)
+autoUpdater.on('update-not-available', () => {
+  dialog.showMessageBox({
+    title: 'No Updates',
+    message: 'Current version is up-to-date.'
+  });
+  updater.enabled = true;
+  updater = null
 });
 
+autoUpdater.on('update-downloaded', () => {
+  dialog.showMessageBox({
+    title: 'Install Updates',
+    message: 'Updates downloaded, application will be quit for update...'
+  }, () => {
+    setImmediate(() => autoUpdater.quitAndInstall())
+  })
+});
 app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdatesAndNotify()
+  autoUpdater.checkForUpdatesAndNotify()
+  // if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdatesAndNotify()
 });
