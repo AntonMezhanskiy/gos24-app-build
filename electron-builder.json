@@ -8,9 +8,9 @@
     {
       "provider": "github",
       "private": true,
-      "owner": "linuxjuggler",
-      "repo": "electron-updater",
-      "token": "<your-token-here>"
+      "owner": "baha96",
+      "repo": "gos24-app-build",
+      "token": "b30c5e53c3ff631588bdba1c6d177b8d49c56e79"
     }
   ],
   "files": [
