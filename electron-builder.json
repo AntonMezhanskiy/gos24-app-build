@@ -1,21 +1,31 @@
 {
-  "productName": "electron-updater-private",
-  "appId": "com.example.yourapp",
+  "productName": "gos24-desktop",
+  "appId": "kz.gos24",
   "directories": {
     "output": "build/${version}"
   },
-  "publish": [
-    {
-      "provider": "github",
-      "private": true,
-      "owner": "baha96",
-      "repo": "gos24-app-build",
-      "token": "b30c5e53c3ff631588bdba1c6d177b8d49c56e79"
-    }
-  ],
+  "win": {
+    "icon": "icons/icon1.ico",
+    "artifactName": "${productName}-${arch}.${ext}",
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64",
+          "ia32"
+        ]
+      }
+    ]
+  },
   "files": [
     "dist/electron/**/*"
   ],
+  "mac": {
+    "icon": "icons/icon.icns"
+  },
+  "linux": {
+    "icon": "icons"
+  },
   "dmg": {
     "contents": [
       {
@@ -30,14 +40,5 @@
         "type": "file"
       }
     ]
-  },
-  "mac": {
-    "icon": "build/icons/icon.icns"
-  },
-  "win": {
-    "icon": "build/icons/icon.ico"
-  },
-  "linux": {
-    "icon": "build/icons"
   }
 }

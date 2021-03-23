@@ -1,17 +1,14 @@
 module.exports = {
   root: true,
+  parser: 'babel-eslint',
   parserOptions: {
-    parser: 'babel-eslint',
     sourceType: 'module'
   },
   env: {
     browser: true,
     node: true
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:vue/recommended',
-  ],
+  extends: 'standard',
   globals: {
     __static: true
   },
@@ -20,6 +17,8 @@ module.exports = {
   ],
   'rules': {
     // allow paren-less arrow functions
+    'semi': 'off',
+    'no-return-await': 'off',
     'arrow-parens': 0,
     // allow async-await
     'generator-star-spacing': 0,
