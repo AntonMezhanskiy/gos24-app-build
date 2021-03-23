@@ -1,9 +1,8 @@
 'use strict';
 /* eslint-disable */
 // eslint-disable-next-line no-unused-vars
-import {app, BrowserWindow, ipcMain, Notification, Tray, Menu, dialog} from 'electron'
-import { autoUpdater } from 'electron-updater'
-import logger from 'electron-log'
+import {app, BrowserWindow, ipcMain, Notification, Tray, Menu} from 'electron';
+import updateApp from './updater'
 const path = require('path');
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -107,99 +106,10 @@ function createWindow () {
   tray.setToolTip('gos24.kz');
   tray.on('click', tray.popUpContextMenu);
   tray.setContextMenu(Menu.buildFromTemplate(trayContextMenu));
+
+  if (!isDevelopment) {
+      updateApp(mainWindow)
+  }
 }
 
 app.on('ready', createWindow);
-
-// if (process.env.NODE_ENV === 'production') {
-    autoUpdater.setFeedURL({
-        provider: 'github',
-        repo: 'gos24-app-build',
-        owner: 'baha96',
-        private: true,
-        token: 'e924b0abd4dd4dd97f75ea2571a093f03c181717'
-    });
-    // autoUpdater.checkForUpdates();
-// }
-
-/*
-
-  "publish": [
-    {
-      "provider": "github",
-      "private": true,
-      "owner": "baha96",
-      "repo": "gos24-app-build",
-      "token": "e924b0abd4dd4dd97f75ea2571a093f03c181717"
-    }
-  ],
- */
-// autoUpdater.logger = logger;
-// autoUpdater.logger.transports.file.level = 'info';
-// logger.info('App starting...');
-
-function sendStatusToWindow(text) {
-  logger.info(text);
-  mainWindow.webContents.send('message', text);
-}
-autoUpdater.on('checking-for-update', () => {
-  sendStatusToWindow('Checking for update...');
-});
-autoUpdater.on('update-available', (info) => {
-  sendStatusToWindow('Update available.');
-});
-autoUpdater.on('update-not-available', (info) => {
-  sendStatusToWindow('Update not available.');
-});
-autoUpdater.on('error', (err) => {
-  sendStatusToWindow('Error in auto-updater. ' + err);
-});
-autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = "Download speed: " + progressObj.bytesPerSecond;
-  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
-  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
-  sendStatusToWindow(log_message);
-});
-autoUpdater.on('update-downloaded', async (info) => {
-  await sendStatusToWindow('Update downloaded');
-  await autoUpdater.quitAndInstall();
-});
-
-
-autoUpdater.channel = 'latest';
-autoUpdater.allowDowngrade = false;
-
-autoUpdater.logger = logger;
-autoUpdater.logger.transports.file.level = 'info';
-autoUpdater.logger.transports.file.appName = 'private repo';
-logger.info('======================================================================');
-logger.info('App starting... -- ' + new Date());
-autoUpdater.autoDownload = true;
-// ,
-//       "token": "e924b0abd4dd4dd97f75ea2571a093f03c181717"
-
-// autoUpdater.on('update-downloaded', () => {
-//     dialog.showMessageBox({
-//         message: 'update Downloaded !!'
-//     })
-// });
-//
-// autoUpdater.on('checking-for-update', () => {
-//     dialog.showMessageBox({
-//         message: 'CHECKING FOR UPDATES !!'
-//     })
-// });
-//
-// autoUpdater.on('update-available', () => {
-//     dialog.showMessageBox({
-//         message: ' update-available !!'
-//     })
-// });
-//
-// autoUpdater.on('error', (error) => {
-//     autoUpdater.logger.debug(error)
-// });
-
-app.on('ready', () => {
-    if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-});
