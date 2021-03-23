@@ -31,104 +31,104 @@
     import NotificationNoContent from '../components/notification/NotificationNoContent.vue'
 
     export default {
-      name: 'Home',
-      components: {
-        Loading,
-        InputRadio,
-        NotificationList,
-        NotificationNoContent,
-        Pagination
-      },
-      data () {
-        return {
-          query: {
-            type: this.$route.query.type || '2', // 0
-            page: +this.$route.query.page || 1,
-            service: this.$route.query.service || ''
-          },
-          loading: false,
-          items: [],
-          next: null,
-          previous: null,
-          count: null,
-          showMarkAll: false,
-          roomName: 'room_notify_' + this.$store.state.user.userId
-        }
-      },
-      created () {
-        console.log('Notifier', this.$electron)
-        this.$socket.client.emit('join', this.roomName);
-        this.loadPage()
-      },
-      sockets: {
-        NOTIFY_PING: function (response) {
-          console.log('NOTIFY_PING', response);
-          this.loadPage();
-          this.$electron.ipcRenderer.send('notify-on');
+        name: 'Home',
+        components: {
+            Loading,
+            InputRadio,
+            NotificationList,
+            NotificationNoContent,
+            Pagination
         },
-        connect () {
-          console.info('socket connected');
+        data () {
+            return {
+                query: {
+                    type: this.$route.query.type || '2', // 0
+                    page: +this.$route.query.page || 1,
+                    service: this.$route.query.service || ''
+                },
+                loading: false,
+                items: [],
+                next: null,
+                previous: null,
+                count: null,
+                showMarkAll: false,
+                roomName: 'room_notify_' + this.$store.state.user.userId
+            }
         },
-        disconnect () {
-          console.info('socket disconnected');
+        created () {
+            console.log('Notifier', this.$electron);
+            this.$socket.client.emit('join', this.roomName);
+            this.loadPage()
         },
-        reconnect () {
-          this.$socket.client.emit('join', this.roomName);
-        }
-      },
-      beforeDestroy () {
-        console.log('beforeDestroy')
-        this.$socket.client.emit('leave', this.roomName);
-      },
-      methods: {
-        selectedValue (val) {
-          this.query.page = 1;
-          this.query[val.name] = val.value;
+        sockets: {
+            NOTIFY_PING: function (response) {
+                console.log('NOTIFY_PING', response);
+                this.loadPage();
+                this.$electron.ipcRenderer.send('notify-on');
+            },
+            connect () {
+                console.info('socket connected');
+            },
+            disconnect () {
+                console.info('socket disconnected');
+            },
+            reconnect () {
+                this.$socket.client.emit('join', this.roomName);
+            }
+        },
+        beforeDestroy () {
+            console.log('beforeDestroy');
+            this.$socket.client.emit('leave', this.roomName);
+        },
+        methods: {
+            selectedValue (val) {
+                this.query.page = 1;
+                this.query[val.name] = val.value;
 
-          this.loadPage()
-        },
-        pagination (val) {
-          switch (val) {
-            case 'next':
-              if (this.next !== null) {
-                this.query.page++;
-                this.loading = true;
                 this.loadPage()
-              }
-              break;
-            case 'prev':
-              if (this.previous !== null) {
-                this.query.page--;
+            },
+            pagination (val) {
+                switch (val) {
+                case 'next':
+                    if (this.next !== null) {
+                        this.query.page++;
+                        this.loading = true;
+                        this.loadPage()
+                    }
+                    break;
+                case 'prev':
+                    if (this.previous !== null) {
+                        this.query.page--;
+                        this.loading = true;
+                        this.loadPage()
+                    }
+                    break;
+                }
+            },
+            async changeMark () {
+                const {data} = await this.$axios.put('notification/mark/');
+                if (data.message === 'ok') {
+                    this.loadPage();
+                }
+            },
+            async loadPage () {
                 this.loading = true;
-                this.loadPage()
-              }
-              break;
-          }
-        },
-        async changeMark () {
-          const {data} = await this.$axios.put('notification/mark/');
-          if (data.message === 'ok') {
-            this.loadPage();
-          }
-        },
-        async loadPage () {
-          this.loading = true;
-          this.items = [];
+                this.items = [];
 
-          try {
-            const {data} = await this.$axios.get('notification/', {params: this.query});
-            this.next = data.next;
-            this.previous = data.previous;
-            this.count = data.count;
-            this.items = data.results;
-            this.showMarkAll = data.results.some(({viewed}) => viewed === false);
-          } catch (error) {
-            console.log('Ошибка при получение "Уведомления".', error)
-          } finally {
-            this.loading = false
-          }
+                try {
+                    const {data} = await this.$axios.get('notification/', {params: this.query});
+                    this.next = data.next;
+                    this.previous = data.previous;
+                    this.count = data.count;
+                    this.items = data.results;
+                    this.showMarkAll = data.results.some(({viewed}) => viewed === false);
+                } catch (error) {
+                    console.log('Ошибка при получение "Уведомления".', error)
+                } finally {
+                    this.loading = false
+                }
+            }
         }
-      }
     }
 </script>
 

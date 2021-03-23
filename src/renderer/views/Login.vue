@@ -45,51 +45,51 @@
     import {mapMutations} from 'vuex';
 
     export default {
-      name: 'Login',
-      components: {
-        Input,
-        Loading,
-        Button
-      },
-      data () {
-        return {
-          password: '',
-          email: '',
-          error: '',
-          disabled: false
-        }
-      },
-      methods: {
-        ...mapMutations({
-          setUser: 'SET_USER',
-          setAccesToken: 'STORE_ACCESS_TOKEN',
-          setRefreshToken: 'STORE_REFRESH_TOKEN'
-        }),
-        openLink (link) {
-          this.$electron.shell.openExternal(link)
+        name: 'Login',
+        components: {
+            Input,
+            Loading,
+            Button
         },
-        selectedValue (val) {
-          this[val.name] = val.value
+        data () {
+            return {
+                password: '',
+                email: '',
+                error: '',
+                disabled: false
+            }
         },
-        async login () {
-          try {
-            this.disabled = true;
-            this.error = '';
-            const username = this.email.toLowerCase();
-            const password = this.password;
-            const {data} = await this.$axios.post('/user/authenticate/', {username, password})
-            this.setUser(data.user);
-            this.setAccesToken(data.accessToken);
-            this.setRefreshToken(data.refreshToken);
-            await this.$router.replace(this.$route.query.redirect || '/');
-          } catch (err) {
-            console.log('error 1', err)
-            this.error = err.response.data.error;
-          } finally {
-            this.disabled = false;
-          }
+        methods: {
+            ...mapMutations({
+                setUser: 'SET_USER',
+                setAccesToken: 'STORE_ACCESS_TOKEN',
+                setRefreshToken: 'STORE_REFRESH_TOKEN'
+            }),
+            openLink (link) {
+                this.$electron.shell.openExternal(link)
+            },
+            selectedValue (val) {
+                this[val.name] = val.value
+            },
+            async login () {
+                try {
+                    this.disabled = true;
+                    this.error = '';
+                    const username = this.email.toLowerCase();
+                    const password = this.password;
+                    const {data} = await this.$axios.post('/user/authenticate/', {username, password});
+                    this.setUser(data.user);
+                    this.setAccesToken(data.accessToken);
+                    this.setRefreshToken(data.refreshToken);
+                    await this.$router.replace(this.$route.query.redirect || '/');
+                } catch (err) {
+                    console.log('error 1', err);
+                    this.error = err.response.data.error;
+                } finally {
+                    this.disabled = false;
+                }
+            }
         }
-      }
     }
 </script>
 

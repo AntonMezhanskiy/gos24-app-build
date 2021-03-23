@@ -1,13 +1,13 @@
 <template>
-  <div class="InputCheckbox">
-    InputCheckbox
-  </div>
+    <div class="InputCheckbox">
+        InputCheckbox
+    </div>
 </template>
 
 <script>
-export default {
-  name: 'InputCheckbox'
-};
+    export default {
+        name: 'InputCheckbox'
+    };
 </script>
 
 <style scoped></style>

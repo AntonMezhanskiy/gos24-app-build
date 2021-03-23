@@ -24,59 +24,59 @@
 <script>
 
 export default {
-  name: 'ButtonCreate',
-  data () {
-    return {
-      open: false
-    };
-  },
-  methods: {
-    toggle (bool) {
-      return bool ? 'buttonUp2.svg' : 'buttonDown2.svg';
+    name: 'ButtonCreate',
+    data () {
+        return {
+            open: false
+        };
     },
-    openLink (link) {
-      this.$electron.shell.openExternal(link)
-    }
-  },
-  computed: {
-    user () {
-      return this.$store.getters['user'];
-    },
-    isAdmin () {
-      return this.$store.getters['adminQa'] || this.$store.getters['adminBlog'];
-    },
-    isAuth () {
-      return this.$store.getters['isAuth'];
-    },
-    items () {
-      const items = [
-        {name: 'Задать вопрос', url: '/qa/new'},
-        {name: 'Вопрос в комплексное сопровождение', url: '/support/new'},
-        {name: 'Вопрос в техподдержку', url: '/user/support/new'},
-        {name: 'Заказать обратный звонок', url: '/contact'}
-      ]
-      const adminLinks = [
-        {name: 'Вопрос-ответ', url: '/question-answer/new'},
-        {name: 'Новость', url: '/blog/new'},
-        {name: 'Статья', url: '/article/new'},
-        {
-          name: 'Официальное разъяснение',
-          url: '/official-clarification/new'
+    methods: {
+        toggle (bool) {
+            return bool ? 'buttonUp2.svg' : 'buttonDown2.svg';
         },
-        {name: 'Вебинар', url: '/education/webinar/new'},
-        {name: 'Мастер-класс', url: '/education/master-class/new'},
-        {name: 'Курс', url: '/education/course/new'},
-        {name: 'База знаний', url: '/knowledgebase/new'},
-        {name: 'Продукт', url: '/products/new'},
-        {name: 'Открытый диалог', url: '/open-dialog'}
-      ];
-      return {
-        toAll: items,
-        admin: this.isAdmin,
-        adminLinks: this.isAdmin ? adminLinks : []
-      };
+        openLink (link) {
+            this.$electron.shell.openExternal(link)
+        }
+    },
+    computed: {
+        user () {
+            return this.$store.getters['user'];
+        },
+        isAdmin () {
+            return this.$store.getters['adminQa'] || this.$store.getters['adminBlog'];
+        },
+        isAuth () {
+            return this.$store.getters['isAuth'];
+        },
+        items () {
+            const items = [
+                {name: 'Задать вопрос', url: '/qa/new'},
+                {name: 'Вопрос в комплексное сопровождение', url: '/support/new'},
+                {name: 'Вопрос в техподдержку', url: '/user/support/new'},
+                {name: 'Заказать обратный звонок', url: '/contact'}
+            ];
+            const adminLinks = [
+                {name: 'Вопрос-ответ', url: '/question-answer/new'},
+                {name: 'Новость', url: '/blog/new'},
+                {name: 'Статья', url: '/article/new'},
+                {
+                    name: 'Официальное разъяснение',
+                    url: '/official-clarification/new'
+                },
+                {name: 'Вебинар', url: '/education/webinar/new'},
+                {name: 'Мастер-класс', url: '/education/master-class/new'},
+                {name: 'Курс', url: '/education/course/new'},
+                {name: 'База знаний', url: '/knowledgebase/new'},
+                {name: 'Продукт', url: '/products/new'},
+                {name: 'Открытый диалог', url: '/open-dialog'}
+            ];
+            return {
+                toAll: items,
+                admin: this.isAdmin,
+                adminLinks: this.isAdmin ? adminLinks : []
+            };
+        }
     }
-  }
 };
 </script>
 

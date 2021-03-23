@@ -5,6 +5,8 @@ import {app, BrowserWindow, ipcMain, Notification, Tray, Menu} from 'electron';
 import updateApp from './updater'
 const path = require('path');
 
+// app.commandLine.appendSwitch("in-process-gpu");
+
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 if (!isDevelopment) {
