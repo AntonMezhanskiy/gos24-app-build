@@ -2,7 +2,7 @@ import {autoUpdater} from 'electron-updater'
 import logger from 'electron-log'
 
 let mainWindow;
-process.env.GH_TOKEN = '5eedb4b317fec9c791dd11dc75aab9bc4491df98';
+process.env.GH_TOKEN = '';
 
 autoUpdater.logger = logger;
 autoUpdater.logger.transports.file.level = 'info';
