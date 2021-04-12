@@ -2,7 +2,7 @@
 /* eslint-disable */
 // eslint-disable-next-line no-unused-vars
 import {app, BrowserWindow, ipcMain, Notification, Tray, Menu} from 'electron';
-import updateApp from './updater'
+import updateApp from './updater';
 const path = require('path');
 
 // app.commandLine.appendSwitch("in-process-gpu");
@@ -28,6 +28,14 @@ const trayContextMenu = [
     }
   },
   {
+    label: 'Выйти из аккаунта',
+    visible: false,
+    click: () => {
+      mainWindow.show();
+      mainWindow.webContents.send('logout')
+    }
+  },
+  {
     label: 'Выйти из приложение',
     click: function () {
       isQuiting = true;
@@ -47,6 +55,10 @@ ipcMain.on('notify-on', (event, args) => {
     // icon: 'build/icons/icon1.ico'
   });
   Notify.show();
+});
+ipcMain.on('show-logout-btn', (event, args) => {
+  trayContextMenu[1].visible = args;
+  tray.setContextMenu(Menu.buildFromTemplate(trayContextMenu));
 });
 
 app.on('window-all-closed', () => {

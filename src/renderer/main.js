@@ -12,9 +12,9 @@ moment.locale('ru');
 
 Vue.prototype.$moment = moment;
 
-if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
-Vue.prototype.$axios = axios
-Vue.config.productionTip = false
+if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
+Vue.prototype.$axios = axios;
+Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
 new Vue({
@@ -22,4 +22,4 @@ new Vue({
     router,
     store,
     template: '<App/>'
-}).$mount('#app')
+}).$mount('#app');

@@ -56,13 +56,11 @@
             }
         },
         created () {
-            console.log('Notifier', this.$electron);
             this.$socket.client.emit('join', this.roomName);
             this.loadPage()
         },
         sockets: {
             NOTIFY_PING: function (response) {
-                console.log('NOTIFY_PING', response);
                 this.loadPage();
                 this.$electron.ipcRenderer.send('notify-on');
             },

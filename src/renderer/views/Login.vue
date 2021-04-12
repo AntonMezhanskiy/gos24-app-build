@@ -81,6 +81,7 @@
                     this.setUser(data.user);
                     this.setAccesToken(data.accessToken);
                     this.setRefreshToken(data.refreshToken);
+                    this.$electron.ipcRenderer.send('show-logout-btn', true);
                     await this.$router.replace(this.$route.query.redirect || '/');
                 } catch (err) {
                     console.log('error 1', err);

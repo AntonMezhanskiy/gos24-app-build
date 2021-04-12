@@ -15,6 +15,16 @@
         components: {
             ButtonCreate,
             ProgressUpdater
+        },
+        created () {
+            this.$electron.ipcRenderer.on('logout', async () => {
+                await this.$store.commit('LOGOUT_USER');
+                await this.$electron.ipcRenderer.send('show-logout-btn', false);
+                await this.$router.replace('/login')
+            });
+        },
+        mounted () {
+            this.$electron.ipcRenderer.send('show-logout-btn', this.$store.getters['isAuth']);
         }
     }
 </script>
