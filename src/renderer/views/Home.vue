@@ -60,9 +60,11 @@
             this.loadPage()
         },
         sockets: {
-            NOTIFY_PING: function (response) {
+            NOTIFY_PING ({count}) {
                 this.loadPage();
-                this.$electron.ipcRenderer.send('notify-on');
+                if (count > 0) {
+                    this.$electron.ipcRenderer.send('notify-on');
+                }
             },
             connect () {
                 console.info('socket connected');

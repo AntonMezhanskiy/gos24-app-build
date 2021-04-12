@@ -5,6 +5,7 @@ import store from './store'
 const $axios = axios.create({
     // baseURL: 'http://localhost:8000/api/v2'
     baseURL: 'https://gos24.kz/api/v2'
+    // baseURL: 'http://test.gos24.kz/api/v2'
 });
 
 $axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';

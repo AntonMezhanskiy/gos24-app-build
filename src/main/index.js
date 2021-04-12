@@ -13,6 +13,7 @@ if (!isDevelopment) {
   global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
+const icon = path.join(__static, 'icons/icon.png');
 let mainWindow;
 const winURL = isDevelopment ? `http://localhost:9080` : `file://${__dirname}/index.html`;
 
@@ -50,9 +51,9 @@ app.on('before-quit', function () {
 
 ipcMain.on('notify-on', (event, args) => {
   const Notify = new Notification({
-    title: 'gos24.kz',
-    body: 'У вас новое уведомление на сайте gos24.kz'
-    // icon: 'build/icons/icon1.ico'
+    title: 'ИТС Госсектор24',
+    body: 'У вас новое уведомление на сайте gos24.kz',
+    icon: icon
   });
   Notify.show();
 });
@@ -83,7 +84,7 @@ function createWindow () {
     fullscreenable: false,
     fullscreen: false, // полноэкран
     minimizable: false,
-    icon: path.join(__static, 'icons/icon1.ico'),
+    icon: icon,
     webPreferences: {
       nodeIntegration: true,
       defaultEncoding: 'UTF-8'
