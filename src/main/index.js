@@ -1,7 +1,7 @@
 'use strict';
 /* eslint-disable */
 // eslint-disable-next-line no-unused-vars
-import {app, BrowserWindow, ipcMain, Notification, Tray, Menu} from 'electron';
+import {app, BrowserWindow, screen, ipcMain, Notification, Tray, Menu} from 'electron';
 import updateApp from './updater';
 const path = require('path');
 
@@ -15,6 +15,12 @@ if (!isDevelopment) {
 
 const icon = path.join(__static, 'icons/icon.png');
 let mainWindow;
+const windowSize = {
+  width: 80,
+  height: 80,
+  x: 150,
+  y: 150,
+};
 const winURL = isDevelopment ? `http://localhost:9080` : `file://${__dirname}/index.html`;
 
 // for Tray
@@ -61,7 +67,9 @@ ipcMain.on('show-logout-btn', (event, args) => {
   trayContextMenu[1].visible = args;
   tray.setContextMenu(Menu.buildFromTemplate(trayContextMenu));
 });
-
+ipcMain.on('close-app', (event, args) => {
+  app.quit()
+});
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
@@ -75,15 +83,23 @@ app.on('activate', () => {
 });
 
 function createWindow () {
+  const display = screen.getPrimaryDisplay();
+  const width = display.bounds.width;
+  const height = display.bounds.height;
+
   mainWindow = new BrowserWindow({
-    width: isDevelopment ? 1000 : 400,
-    height: 680,
+    width: windowSize.width,
+    height: windowSize.height,
+    x: width - windowSize.x,
+    y: height - windowSize.y,
     resizable: isDevelopment, // изменение ширины
-    backgroundColor: '#e8e8e8',
+    transparent: true,
     maximizable: false,
     fullscreenable: false,
     fullscreen: false, // полноэкран
     minimizable: false,
+    alwaysOnTop: false,
+    frame: false,
     icon: icon,
     webPreferences: {
       nodeIntegration: true,
@@ -98,7 +114,6 @@ function createWindow () {
   });
 
   if (isDevelopment) {
-    // mainWindow.webContents.openDevTools();
     mainWindow.webContents.on('did-frame-finish-load', () => {
       mainWindow.webContents.once('devtools-opened', () => {
         mainWindow.focus();
@@ -108,6 +123,13 @@ function createWindow () {
   }
 
   app.setAppUserModelId('kz.gos24');
+
+  ipcMain.on('set-window-position', (event, {width = windowSize.width, height = windowSize.height}) => {
+    mainWindow.setSize(width, height);
+    const widthDisplay = (display.bounds.width - width - windowSize.x) + 63;
+    const heightDisplay = (display.bounds.height - height - windowSize.y) + 63;
+    mainWindow.setPosition(widthDisplay, heightDisplay);
+  });
 
   mainWindow.on('close', function (event) {
     if (!isQuiting) {
