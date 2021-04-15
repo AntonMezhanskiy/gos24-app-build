@@ -20,8 +20,7 @@
                         <hr>
                         <p class="mb-0">Если Вы забыли пароль, перейдите по ссылке
                             <a
-                              href="#" @click="openLink('https://gos24.kz/user/forgot')" style="text-decoration: underline; cursor: pointer">Восстановить
-                                пароль.</a>
+                              href="#" @click="openLink('https://gos24.kz/user/forgot')" style="text-decoration: underline; cursor: pointer">Восстановить пароль.</a>
                         </p>
                     </div>
                 </div>
@@ -81,8 +80,9 @@
                     this.setUser(data.user);
                     this.setAccesToken(data.accessToken);
                     this.setRefreshToken(data.refreshToken);
-                    this.$electron.ipcRenderer.send('show-logout-btn', true);
-                    await this.$router.replace(this.$route.query.redirect || '/');
+                    await this.$electron.ipcRenderer.send('show-logout-btn', true);
+                    await this.$electron.ipcRenderer.send('close-child-window');
+                    this.$electron.remote.getCurrentWindow().close();
                 } catch (err) {
                     console.log('error 1', err);
                     this.error = err.response.data.error;
@@ -96,7 +96,7 @@
 
 <style scoped>
     .Login {
-        padding: 1rem 0;
+        padding: 1rem;
         display: flex;
         flex-direction: column;
         justify-content: center;

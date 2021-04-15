@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import axios from './axios'
 import './socket'
+import './vueElectron'
 
 import App from './App'
 import router from './router'
@@ -12,7 +13,6 @@ moment.locale('ru');
 
 Vue.prototype.$moment = moment;
 
-if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 
