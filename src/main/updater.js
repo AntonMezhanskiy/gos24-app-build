@@ -52,6 +52,12 @@ autoUpdater.on('download-progress', (progressObj) => {
     });
 });
 autoUpdater.on('update-downloaded', async (info) => {
+    const Notify = new Notification({
+        title: 'ИТС Госсектор24',
+        body: 'У вас новое уведомление на сайте gos24.kz',
+        icon: icon
+    });
+
     await sendStatusToWindow({
         text: 'Обновление скачалось.',
         type: 'downloaded'
