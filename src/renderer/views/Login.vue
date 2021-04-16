@@ -80,8 +80,8 @@
                     this.setUser(data.user);
                     this.setAccesToken(data.accessToken);
                     this.setRefreshToken(data.refreshToken);
-                    await this.$electron.ipcRenderer.send('close-child-window');
-                    this.$electron.remote.getCurrentWindow().close();
+                    await this.$electron.ipcRenderer.send('update-user', data);
+                    await this.$electron.remote.getCurrentWindow().close();
                 } catch (err) {
                     console.log('error 1', err);
                     this.error = err.response.data.error;

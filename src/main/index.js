@@ -41,6 +41,10 @@ ipcMain.on('close-app', (event, args) => {
   app.quit()
 });
 
+ipcMain.on('update-user', (event, data) => {
+  mainWindow.webContents.send('update-client-user', data)
+});
+
 ipcMain.on('page-auth', (event, args) => {
   childWindow = createBrowserChildWindow();
 

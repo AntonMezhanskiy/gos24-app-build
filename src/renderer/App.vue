@@ -15,8 +15,11 @@
                 await this.$store.commit('LOGOUT_USER');
                 await this.$router.replace('/login')
             });
-        },
-        mounted () {
+            this.$electron.ipcRenderer.on('update-client-user', (event, data) => {
+                this.$store.commit('SET_USER', data.user);
+                this.$store.commit('STORE_ACCESS_TOKEN', data.accessToken);
+                this.$store.commit('STORE_REFRESH_TOKEN', data.refreshToken);
+            });
         },
         beforeDestroy () {
             console.log('beforeDestroy');
