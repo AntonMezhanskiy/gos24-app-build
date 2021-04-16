@@ -37,11 +37,6 @@ ipcMain.on('notify-on', (event, args) => {
   Notify.show();
 });
 
-ipcMain.on('show-logout-btn', (event, args) => {
-  createContextMenu()[1].visible = args;
-  tray.setContextMenu(Menu.buildFromTemplate(createContextMenu()));
-});
-
 ipcMain.on('close-app', (event, args) => {
   app.quit()
 });
@@ -107,8 +102,11 @@ function createWindow () {
 
   tray = new Tray(trayIcon);
   tray.setToolTip('gos24.kz');
-  tray.on('click', tray.popUpContextMenu);
-  tray.setContextMenu(Menu.buildFromTemplate(createContextMenu(mainWindow)));
+
+  const trayClickAndAppShow = (eventName) => tray.on(eventName, () =>  mainWindow.show());
+
+  trayClickAndAppShow('click');
+  trayClickAndAppShow('right-click');
 
   if (!isDevelopment) {
       updateApp(mainWindow)

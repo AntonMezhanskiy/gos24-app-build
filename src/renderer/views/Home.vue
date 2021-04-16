@@ -77,7 +77,6 @@
             },
             async changeUser () {
                 await this.$store.commit('LOGOUT_USER');
-                await this.$electron.ipcRenderer.send('show-logout-btn', false);
             }
         },
         computed: {

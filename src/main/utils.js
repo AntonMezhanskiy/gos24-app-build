@@ -48,6 +48,7 @@ export function createBrowserWindow (options = {} ) {
         transparent: true,
         alwaysOnTop: !isDevelopment,
         frame: false,
+        skipTaskbar: !isDevelopment,
         icon: icon,
         webPreferences: {
             nodeIntegration: true,
@@ -78,7 +79,7 @@ export function createContextMenu (win) {
     return [
         {
             label: 'Показать приложение',
-            click: function () {
+            click: () => {
                 win.show();
             }
         },
