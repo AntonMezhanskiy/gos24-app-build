@@ -1,52 +1,31 @@
 'use strict';
 /* eslint-disable */
-// eslint-disable-next-line no-unused-vars
-import {app, BrowserWindow, ipcMain, Notification, Tray, Menu} from 'electron';
+
+import {app, ipcMain, Notification, Tray, Menu} from 'electron';
 import updateApp from './updater';
-const path = require('path');
 
-// app.commandLine.appendSwitch("in-process-gpu");
+import {
+  showDevTools,
+  isDevelopment,
+  icon,
+  trayIcon,
+  closeApp,
+  changeIsQuiting,
+  createContextMenu,
+  createBrowserWindow,
+  createBrowserChildWindow,
+  setWindowPosition,
+  getUrl
+} from './utils';
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
-if (!isDevelopment) {
-  global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
-}
-
-const icon = path.join(__static, 'icons/icon.png');
 let mainWindow;
-const winURL = isDevelopment ? `http://localhost:9080` : `file://${__dirname}/index.html`;
+let childWindow;
 
 // for Tray
-let isQuiting;
 let tray = null;
-const trayIcon = path.join(__static, 'icons/icon16x16.png');
-const trayContextMenu = [
-  {
-    label: 'Показать приложение',
-    click: function () {
-      mainWindow.show();
-    }
-  },
-  {
-    label: 'Выйти из аккаунта',
-    visible: false,
-    click: () => {
-      mainWindow.show();
-      mainWindow.webContents.send('logout')
-    }
-  },
-  {
-    label: 'Выйти из приложение',
-    click: function () {
-      isQuiting = true;
-      app.quit();
-    }
-  }
-];
 
 app.on('before-quit', function () {
-  isQuiting = true;
+  changeIsQuiting(true)
 });
 
 ipcMain.on('notify-on', (event, args) => {
@@ -57,9 +36,34 @@ ipcMain.on('notify-on', (event, args) => {
   });
   Notify.show();
 });
-ipcMain.on('show-logout-btn', (event, args) => {
-  trayContextMenu[1].visible = args;
-  tray.setContextMenu(Menu.buildFromTemplate(trayContextMenu));
+
+ipcMain.on('close-app', (event, args) => {
+  app.quit()
+});
+
+ipcMain.on('update-user', (event, data) => {
+  mainWindow.webContents.send('update-client-user', data)
+});
+
+ipcMain.on('page-auth', (event, args) => {
+  childWindow = createBrowserChildWindow();
+
+  if (isDevelopment) {
+    showDevTools(childWindow)
+  }
+
+  childWindow.loadURL(getUrl('/#/login', '#login'));
+
+  childWindow.on('close', function () {
+    childWindow = null;
+  });
+
+  ipcMain.on('close-child-window', () => {
+    if (childWindow) {
+      childWindow.close();
+    }
+  });
+
 });
 
 app.on('window-all-closed', () => {
@@ -68,6 +72,8 @@ app.on('window-all-closed', () => {
   }
 });
 
+
+
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
@@ -75,52 +81,36 @@ app.on('activate', () => {
 });
 
 function createWindow () {
-  mainWindow = new BrowserWindow({
-    width: isDevelopment ? 1000 : 400,
-    height: 680,
-    resizable: isDevelopment, // изменение ширины
-    backgroundColor: '#e8e8e8',
-    maximizable: false,
-    fullscreenable: false,
-    fullscreen: false, // полноэкран
-    minimizable: false,
-    icon: icon,
-    webPreferences: {
-      nodeIntegration: true,
-      defaultEncoding: 'UTF-8'
-    }
-  });
 
-  mainWindow.loadURL(winURL);
+  mainWindow = createBrowserWindow();
+
+  mainWindow.loadURL(getUrl('', ''));
 
   mainWindow.on('closed', () => {
     mainWindow = null
   });
 
   if (isDevelopment) {
-    // mainWindow.webContents.openDevTools();
-    mainWindow.webContents.on('did-frame-finish-load', () => {
-      mainWindow.webContents.once('devtools-opened', () => {
-        mainWindow.focus();
-      });
-      mainWindow.webContents.openDevTools();
-    });
+    showDevTools(mainWindow)
   }
 
   app.setAppUserModelId('kz.gos24');
 
+  ipcMain.on('set-window-position', (event, val) => {
+    setWindowPosition(mainWindow, val)
+  });
+
   mainWindow.on('close', function (event) {
-    if (!isQuiting) {
-      event.preventDefault();
-      mainWindow.hide();
-      event.returnValue = false;
-    }
+    closeApp(mainWindow, event)
   });
 
   tray = new Tray(trayIcon);
   tray.setToolTip('gos24.kz');
-  tray.on('click', tray.popUpContextMenu);
-  tray.setContextMenu(Menu.buildFromTemplate(trayContextMenu));
+
+  const trayClickAndAppShow = (eventName) => tray.on(eventName, () =>  mainWindow.show());
+
+  trayClickAndAppShow('click');
+  trayClickAndAppShow('right-click');
 
   if (!isDevelopment) {
       updateApp(mainWindow)

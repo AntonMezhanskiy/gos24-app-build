@@ -1,5 +1,7 @@
 import {autoUpdater} from 'electron-updater'
+import {Notification} from 'electron';
 import logger from 'electron-log'
+import {icon} from './utils';
 
 let mainWindow;
 process.env.GH_TOKEN = '';
@@ -62,6 +64,7 @@ autoUpdater.on('update-downloaded', async (info) => {
         text: 'Обновление скачалось.',
         type: 'downloaded'
     });
+    await Notify.show();
     await autoUpdater.quitAndInstall();
 });
 
