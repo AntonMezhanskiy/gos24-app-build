@@ -2,9 +2,13 @@ import {app, BrowserWindow, screen} from 'electron';
 
 export const path = require('path');
 export const isDevelopment = process.env.NODE_ENV !== 'production';
+
+if (!isDevelopment) {
+    global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
+}
+
 export const icon = path.join(__static, 'icons/icon.png');
 export const trayIcon = path.join(__static, 'icons/icon16x16.png');
-
 let isQuiting = false;
 const windowSize = {
     width: 80,

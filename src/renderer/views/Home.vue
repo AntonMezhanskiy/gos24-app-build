@@ -50,7 +50,7 @@
         data () {
             return {
                 checked: false,
-                countNotify: '0'
+                countNotify: '11'
             }
         },
         methods: {

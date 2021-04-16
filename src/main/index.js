@@ -18,9 +18,6 @@ import {
   getUrl
 } from './utils';
 
-if (!isDevelopment) {
-  global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
-}
 
 let mainWindow;
 let childWindow;
