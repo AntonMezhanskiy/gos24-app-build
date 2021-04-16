@@ -1,14 +1,12 @@
-import {app, BrowserWindow, screen} from 'electron';
-
-export const path = require('path');
+/* eslint-disable */
+const path = require('path');
 export const isDevelopment = process.env.NODE_ENV !== 'production';
 
 if (!isDevelopment) {
     global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-export const icon = path.join(__static, 'icons/icon.png');
-export const trayIcon = path.join(__static, 'icons/icon16x16.png');
+import {app, BrowserWindow, screen} from 'electron';
 let isQuiting = false;
 const windowSize = {
     width: 80,
@@ -17,12 +15,16 @@ const windowSize = {
     y: 150
 };
 
+export const icon = path.join(__static, 'icons/icon.png');
+
+export const trayIcon = path.join(__static, 'icons/icon16x16.png');
+
 export function changeIsQuiting (val) {
     isQuiting = val
 }
 
-export function getUrl (path, pathFile) {
-    return isDevelopment ? `http://localhost:9080${path}` : `file://${__dirname}/index.html${pathFile}`;
+export function getUrl (url, hashUrl) {
+    return isDevelopment ? `http://localhost:9080${url}` : `file://${__dirname}/index.html${hashUrl}`;
 }
 
 export function showDevTools (win) {
@@ -33,7 +35,7 @@ export function showDevTools (win) {
         win.webContents.openDevTools();
     });
 }
-export function createBrowserWindow () {
+export function createBrowserWindow (options = {} ) {
     const display = screen.getPrimaryDisplay();
     const width = display.bounds.width;
     const height = display.bounds.height;
@@ -50,10 +52,11 @@ export function createBrowserWindow () {
         webPreferences: {
             nodeIntegration: true,
             defaultEncoding: 'UTF-8'
-        }
+        },
+        ...options
     })
 }
-export function createBrowserChildWindow () {
+export function createBrowserChildWindow (options = {}) {
     return new BrowserWindow({
         width: 400,
         height: 680,
@@ -66,7 +69,8 @@ export function createBrowserChildWindow () {
         icon: icon,
         webPreferences: {
             webSecurity: false
-        }
+        },
+        ...options
     })
 }
 

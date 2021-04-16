@@ -1,14 +1,14 @@
 'use strict';
 /* eslint-disable */
-// eslint-disable-next-line no-unused-vars
+
 import {app, ipcMain, Notification, Tray, Menu} from 'electron';
 import updateApp from './updater';
+
 import {
   showDevTools,
+  isDevelopment,
   icon,
   trayIcon,
-  isDevelopment,
-  path,
   closeApp,
   changeIsQuiting,
   createContextMenu,
@@ -17,7 +17,6 @@ import {
   setWindowPosition,
   getUrl
 } from './utils';
-
 
 let mainWindow;
 let childWindow;
@@ -50,9 +49,9 @@ ipcMain.on('close-app', (event, args) => {
 ipcMain.on('page-auth', (event, args) => {
   childWindow = createBrowserChildWindow();
 
-  // if (isDevelopment) {
-  //   showDevTools(childWindow)
-  // }
+  if (isDevelopment) {
+    showDevTools(childWindow)
+  }
 
   childWindow.loadURL(getUrl('/#/login', '#login'));
 
@@ -92,9 +91,9 @@ function createWindow () {
     mainWindow = null
   });
 
-  // if (isDevelopment) {
-  //   showDevTools(mainWindow)
-  // }
+  if (isDevelopment) {
+    showDevTools(mainWindow)
+  }
 
   app.setAppUserModelId('kz.gos24');
 
