@@ -44,7 +44,7 @@ export function createBrowserWindow () {
         x: width - windowSize.x,
         y: height - windowSize.y,
         transparent: true,
-        alwaysOnTop: false,
+        alwaysOnTop: !isDevelopment,
         frame: false,
         icon: icon,
         webPreferences: {
