@@ -50,9 +50,9 @@ ipcMain.on('close-app', (event, args) => {
 ipcMain.on('page-auth', (event, args) => {
   childWindow = createBrowserChildWindow();
 
-  if (isDevelopment) {
-    showDevTools(childWindow)
-  }
+  // if (isDevelopment) {
+  //   showDevTools(childWindow)
+  // }
 
   childWindow.loadURL(getUrl('/#/login', '#login'));
 
@@ -92,9 +92,9 @@ function createWindow () {
     mainWindow = null
   });
 
-  if (isDevelopment) {
-    showDevTools(mainWindow)
-  }
+  // if (isDevelopment) {
+  //   showDevTools(mainWindow)
+  // }
 
   app.setAppUserModelId('kz.gos24');
 
