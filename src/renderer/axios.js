@@ -1,13 +1,15 @@
 import axios from 'axios';
 import store from './store'
 import $electron from './vueElectron'
+const isDev = process.env.NODE_ENV === 'development';
+let url = 'https://gos24.kz/api/v2';
 
-console.log('vueElectron', $electron);
-
+if (isDev) {
+    // url = 'http://localhost:8000/api/v2';
+    url = 'http://test.gos24.kz/api/v2';
+}
 const $axios = axios.create({
-    // baseURL: 'http://localhost:8000/api/v2'
-    baseURL: 'https://gos24.kz/api/v2'
-    // baseURL: 'http://test.gos24.kz/api/v2'
+    baseURL: url
 });
 
 $axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
