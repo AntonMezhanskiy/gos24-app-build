@@ -34,27 +34,18 @@ body {
     font-family: "Roboto";
     font-weight: 400;
     font-size: 16px;
-    padding: 0 15px;
-    background: #e8e8e8;
+    background: transparent;
 }
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
-hr {
-    margin: 10px 0;
-}
 img {
     max-width: 100%;
     display: block;
 }
-button {
-    outline: none;
-    background-color: transparent;
-    cursor: pointer;
-    font-size: inherit;
-}
+
 a {
     text-decoration: none;
 }

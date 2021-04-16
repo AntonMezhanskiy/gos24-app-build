@@ -29,16 +29,16 @@ const router = new Router({
     routes: routes
 });
 
-router.beforeEach(async (to, from, next) => {
-    document.title = `${to.meta.title} - ИТС Госсектор24`;
-
-    const isAuth = router.app.$options.store.getters['isAuth'];
-
-    if (to.meta.auth && !isAuth) {
-        next({path: '/login', query: {redirect: to.fullPath}});
-        return;
-    }
-
-    next();
-});
+// router.beforeEach(async (to, from, next) => {
+//     document.title = `${to.meta.title} - ИТС Госсектор24`;
+//
+//     const isAuth = router.app.$options.store.getters['isAuth'];
+//
+//     if (to.meta.auth && !isAuth) {
+//         next({path: '/login', query: {redirect: to.fullPath}});
+//         return;
+//     }
+//
+//     next();
+// });
 export default router;

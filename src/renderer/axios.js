@@ -1,11 +1,15 @@
 import axios from 'axios';
-import router from './router'
 import store from './store'
+import $electron from './vueElectron'
+const isDev = process.env.NODE_ENV === 'development';
+let url = 'https://gos24.kz/api/v2';
 
+if (isDev) {
+    // url = 'http://localhost:8000/api/v2';
+    url = 'http://test.gos24.kz/api/v2';
+}
 const $axios = axios.create({
-    // baseURL: 'http://localhost:8000/api/v2'
-    baseURL: 'https://gos24.kz/api/v2'
-    // baseURL: 'http://test.gos24.kz/api/v2'
+    baseURL: url
 });
 
 $axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
@@ -23,7 +27,7 @@ function getAuthToken () {
 }
 async function logoutOfProgram () {
     await store.commit('LOGOUT_USER');
-    await router.push('/login')
+    await $electron.ipcRenderer.send('page-auth');
 }
 
 $axios.interceptors.request.use(function (config) {
@@ -38,7 +42,7 @@ $axios.interceptors.request.use(function (config) {
 $axios.interceptors.response.use((response) => {
     return response
 }, async function (error) {
-    console.log(error.response)
+    console.log(error.response);
     if (error.response.status === 401 && error.response.data.code === 'token_not_valid' && error.response.data.detail !== 'Token is invalid or expired' && !error.config.__isRetryRequest) {
         try {
             const response = await getAuthToken();
