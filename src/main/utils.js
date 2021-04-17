@@ -15,6 +15,8 @@ const windowSize = {
     y: 150
 };
 
+export const currentVersion = app.getVersion();
+
 export const icon = path.join(__static, 'icons/icon.png');
 
 export const trayIcon = path.join(__static, 'icons/icon16x16.png');

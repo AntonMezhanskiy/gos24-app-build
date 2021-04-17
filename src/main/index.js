@@ -1,11 +1,12 @@
 'use strict';
 /* eslint-disable */
 
-import {app, ipcMain, Notification, Tray, Menu} from 'electron';
+import {app, ipcMain, Notification, Tray, Menu, remote} from 'electron';
 import updateApp from './updater';
 
 import {
   showDevTools,
+  currentVersion,
   isDevelopment,
   icon,
   trayIcon,
@@ -105,7 +106,7 @@ function createWindow () {
   });
 
   tray = new Tray(trayIcon);
-  tray.setToolTip('gos24.kz');
+  tray.setToolTip('gos24.kz — v' + currentVersion);
 
   const trayClickAndAppShow = (eventName) => tray.on(eventName, () =>  mainWindow.show());
 
