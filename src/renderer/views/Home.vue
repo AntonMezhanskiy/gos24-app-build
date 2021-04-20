@@ -1,7 +1,7 @@
 <template>
     <div class="Home" :class="{checked}">
         <nav class="menu">
-            <div class="menu-open-button" @click="toggle">
+            <div class="menu-open-button" @contextmenu="toggle" @click="toggle">
                 <span :data-dot-show="countNotify > 0" class="dot"></span>
                 <img class="hamburger-logo" src="../assets/emblem.png" alt="">
                 <span class="hamburger hamburger-1"></span>
