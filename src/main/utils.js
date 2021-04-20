@@ -86,14 +86,6 @@ export function createContextMenu (win) {
             }
         },
         {
-            label: 'Выйти из аккаунта',
-            visible: false,
-            click: () => {
-                win.show();
-                win.webContents.send('logout')
-            }
-        },
-        {
             label: 'Выйти из приложение',
             click: function () {
                 changeIsQuiting(true);
@@ -106,8 +98,8 @@ export function createContextMenu (win) {
 export function setWindowPosition (win, {width = windowSize.width, height = windowSize.height}) {
     const display = screen.getPrimaryDisplay();
     win.setSize(width, height);
-    const widthDisplay = (display.bounds.width - width - windowSize.x) + 63;
-    const heightDisplay = (display.bounds.height - height - windowSize.y) + 63;
+    const widthDisplay = (display.bounds.width - width - windowSize.x) + (windowSize.x / 2);
+    const heightDisplay = (display.bounds.height - height - windowSize.y) + (windowSize.y / 2);
     win.setPosition(widthDisplay, heightDisplay);
 }
 

@@ -108,10 +108,11 @@ function createWindow () {
   tray = new Tray(trayIcon);
   tray.setToolTip('gos24.kz — v' + currentVersion);
 
-  const trayClickAndAppShow = (eventName) => tray.on(eventName, () =>  mainWindow.show());
+  tray.on('click', () => mainWindow.show());
 
-  trayClickAndAppShow('click');
-  trayClickAndAppShow('right-click');
+  tray.setContextMenu(Menu.buildFromTemplate(createContextMenu(mainWindow)));
+  // trayClickAndAppShow('click');
+  // trayClickAndAppShow('right-click');
 
   if (!isDevelopment) {
       updateApp(mainWindow)
