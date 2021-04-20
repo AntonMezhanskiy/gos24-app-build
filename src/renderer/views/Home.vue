@@ -58,7 +58,8 @@
         },
         created () {
             this.$bus.$on('changeUser', async () => {
-                await this.change(this.dictionary.changeUser);
+                await this.socketConn('leave');
+                await this.$store.commit('LOGOUT_USER');
                 await this.$electron.ipcRenderer.send('page-auth');
             })
         },
@@ -91,10 +92,6 @@
                     break;
                 case this.dictionary.auth:
                     this.$electron.ipcRenderer.send('page-auth');
-                    break;
-                case this.dictionary.changeUser:
-                    this.socketConn('leave');
-                    this.$store.commit('LOGOUT_USER');
                     break;
                 }
                 this.toggle(type)
