@@ -52,19 +52,18 @@ ipcMain.on('page-auth', (event, args) => {
   if (isDevelopment) {
     showDevTools(childWindow)
   }
-
   childWindow.loadURL(getUrl('/#/login', '#login'));
 
   childWindow.on('close', function () {
     childWindow = null;
   });
 
-  ipcMain.on('close-child-window', () => {
-    if (childWindow) {
-      childWindow.close();
-    }
-  });
+});
 
+ipcMain.on('close-child-window', () => {
+  if (childWindow) {
+    childWindow.close();
+  }
 });
 
 app.on('window-all-closed', () => {
@@ -73,13 +72,18 @@ app.on('window-all-closed', () => {
   }
 });
 
-
-
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
 });
+
+ipcMain.on('show-logout-btn', (event, args) => {
+  const contextMenu = createContextMenu(mainWindow);
+  contextMenu[1].visible = args;
+  tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
+});
+
 
 function createWindow () {
 

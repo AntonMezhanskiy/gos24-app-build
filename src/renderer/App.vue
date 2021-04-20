@@ -7,19 +7,19 @@
 <script>
     export default {
         name: 'gos24-electron',
-        components: {
-
-        },
         created () {
             this.$electron.ipcRenderer.on('logout', async () => {
                 await this.$store.commit('LOGOUT_USER');
-                await this.$router.replace('/login')
+                await this.$bus.$emit('changeUser')
             });
             this.$electron.ipcRenderer.on('update-client-user', (event, data) => {
                 this.$store.commit('SET_USER', data.user);
                 this.$store.commit('STORE_ACCESS_TOKEN', data.accessToken);
                 this.$store.commit('STORE_REFRESH_TOKEN', data.refreshToken);
             });
+        },
+        mounted () {
+            this.$electron.ipcRenderer.send('show-logout-btn', this.$store.getters['isAuth']);
         },
         beforeDestroy () {
             console.log('beforeDestroy');

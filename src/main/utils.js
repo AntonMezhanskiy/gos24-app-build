@@ -86,6 +86,14 @@ export function createContextMenu (win) {
             }
         },
         {
+            label: 'Сменить аккаунт',
+            visible: false,
+            click: () => {
+                win.show();
+                win.webContents.send('logout')
+            }
+        },
+        {
             label: 'Выйти из приложение',
             click: function () {
                 changeIsQuiting(true);
