@@ -94,7 +94,7 @@ export function createContextMenu (win) {
             }
         },
         {
-            label: 'Выйти из приложение',
+            label: 'Выйти из приложения',
             click: function () {
                 changeIsQuiting(true);
                 app.quit();

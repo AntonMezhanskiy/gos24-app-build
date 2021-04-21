@@ -94,7 +94,7 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
     .Login {
         padding: 1rem;
         display: flex;
@@ -117,5 +117,12 @@
         max-height: 300px;
         object-fit: contain;
         margin: 1rem 0;
+    }
+    .footer {
+        display: flex;
+        align-items: center;
+        .small {
+            margin-left: 1rem;
+        }
     }
 </style>
