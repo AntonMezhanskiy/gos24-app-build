@@ -1,8 +1,10 @@
 'use strict';
 /* eslint-disable */
 
-import {app, ipcMain, Notification, Tray, Menu, remote} from 'electron';
+import {app, ipcMain, Notification, Tray, Menu, remote, protocol} from 'electron';
 import updateApp from './updater';
+
+app.disableHardwareAcceleration();
 
 import {
   showDevTools,
@@ -15,7 +17,6 @@ import {
   createContextMenu,
   createBrowserWindow,
   createBrowserChildWindow,
-  setWindowPosition,
   getUrl
 } from './utils';
 
@@ -87,8 +88,10 @@ ipcMain.on('show-logout-btn', (event, args) => {
 
 function createWindow () {
 
-  mainWindow = createBrowserWindow();
-
+  // protocol.unregisterProtocol('', () => {
+    mainWindow = createBrowserWindow();
+  // });
+  // console.log('mainWindow', mainWindow)
   mainWindow.loadURL(getUrl('', ''));
 
   mainWindow.on('closed', () => {
@@ -101,12 +104,12 @@ function createWindow () {
 
   app.setAppUserModelId('kz.gos24');
 
-  ipcMain.on('set-window-position', (event, val) => {
-    setWindowPosition(mainWindow, val)
-  });
-
   mainWindow.on('close', function (event) {
     closeApp(mainWindow, event)
+  });
+
+  mainWindow.once('ready-to-show',()=>{
+    mainWindow.show()
   });
 
   tray = new Tray(trayIcon);
@@ -123,4 +126,11 @@ function createWindow () {
   }
 }
 
-app.on('ready', createWindow);
+// app.on('ready', createWindow);
+app.on('ready', async () => {
+  setTimeout(() => {
+    protocol.unregisterProtocol('', () => {
+      createWindow()
+    });
+  }, 100);
+});

@@ -72,15 +72,14 @@
         methods: {
             toggle (type) {
                 const status = this.checked = !this.checked;
-                let setWindowSize = {};
+                // let setWindowSize = {};
                 this.checked = status;
 
                 if (status) {
-                    setWindowSize = { width: 220, height: 500 };
+                    // setWindowSize = { width: 220, height: 500 };
                 } else if (type !== this.dictionary.auth) {
                     this.$electron.ipcRenderer.send('close-child-window');
                 }
-                this.$electron.ipcRenderer.send('set-window-position', setWindowSize);
             },
             change (type, data) {
                 switch (type) {
@@ -155,10 +154,9 @@
         display: flex;
         flex-direction: column;
         position: relative;
+        min-height: 390px;
 
         .menu {
-            width: 60px;
-            height: 60px;
             font-size: 20px;
         }
 
@@ -323,10 +321,10 @@
         }
 
         &.checked {
-            .menu {
-                height: 480px;
-                width: 200px;
-            }
+            /*.menu {*/
+            /*    height: 480px;*/
+            /*    width: 200px;*/
+            /*}*/
             .menu-open-button .hamburger {
                 opacity: 1;
             }

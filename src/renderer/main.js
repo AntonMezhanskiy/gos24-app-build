@@ -8,11 +8,6 @@ import router from './router'
 import store from './store'
 import './assets/styles/main.css'
 
-import moment from 'moment'
-moment.locale('ru');
-
-Vue.prototype.$moment = moment;
-
 Vue.prototype.$axios = axios;
 Vue.prototype.$bus = new Vue();
 Vue.config.productionTip = false;

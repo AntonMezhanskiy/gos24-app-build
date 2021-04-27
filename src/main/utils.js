@@ -9,10 +9,10 @@ if (!isDevelopment) {
 import {app, BrowserWindow, screen} from 'electron';
 let isQuiting = false;
 const windowSize = {
-    width: 80,
-    height: 80,
-    x: 150,
-    y: 150
+    width: 250,
+    height: 500,
+    x: 400,
+    y: 600
 };
 
 export const currentVersion = app.getVersion();
@@ -45,14 +45,19 @@ export function createBrowserWindow (options = {} ) {
     return new BrowserWindow({
         width: windowSize.width,
         height: windowSize.height,
-        x: width - windowSize.x,
-        y: height - windowSize.y,
+        // x: width - windowSize.x,
+        // y: height - windowSize.y,
+        // backgroundColor: 'rgba(255,255,255,0)',
         transparent: true,
+        focusable: false,
+        resizable: false,
         alwaysOnTop: !isDevelopment,
         frame: false,
         skipTaskbar: !isDevelopment,
         icon: icon,
+        show: false,
         webPreferences: {
+            enableRemoteModule: true,
             nodeIntegration: true,
             defaultEncoding: 'UTF-8'
         },
@@ -70,6 +75,7 @@ export function createBrowserChildWindow (options = {}) {
         fullscreen: false, // полноэкран
         minimizable: false,
         icon: icon,
+        show: false,
         webPreferences: {
             webSecurity: false
         },
@@ -101,14 +107,6 @@ export function createContextMenu (win) {
             }
         }
     ];
-}
-
-export function setWindowPosition (win, {width = windowSize.width, height = windowSize.height}) {
-    const display = screen.getPrimaryDisplay();
-    win.setSize(width, height);
-    const widthDisplay = (display.bounds.width - width - windowSize.x) + (windowSize.x / 2);
-    const heightDisplay = (display.bounds.height - height - windowSize.y) + (windowSize.y / 2);
-    win.setPosition(widthDisplay, heightDisplay);
 }
 
 export function closeApp (win, event) {
