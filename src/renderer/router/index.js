@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '../views/Home.vue';
+import HomeForOldWindowsVersion from '../views/HomeForOldWindowsVersion.vue';
 import Login from '../views/Login.vue';
 
 Vue.use(Router);
@@ -10,6 +11,15 @@ const routes = [
         path: '/',
         name: 'Home',
         component: Home,
+        meta: {
+            title: 'Центр уведомлений',
+            auth: true
+        }
+    },
+    {
+        path: '/home-for-old',
+        name: 'HomeForOldWindowsVersion',
+        component: HomeForOldWindowsVersion,
         meta: {
             title: 'Центр уведомлений',
             auth: true
