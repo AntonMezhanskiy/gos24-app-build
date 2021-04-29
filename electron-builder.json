@@ -10,7 +10,7 @@
       "private": true,
       "owner": "baha96",
       "repo": "gos24-app-build",
-      "token": "token"
+      "token": "${env.ENV_TOKEN_GITHUB}"
     }
   ],
   "win": {

@@ -9,6 +9,7 @@ const MinifyPlugin = require("babel-minify-webpack-plugin")
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const Dotenv                = require('dotenv-webpack');
 const { VueLoaderPlugin } = require('vue-loader')
 
 let webConfig = {
@@ -92,6 +93,7 @@ let webConfig = {
     ]
   },
   plugins: [
+    new Dotenv({ path: process.env.NODE_ENV === 'production' ? path.join(__dirname, '../.env.prod') : path.join(__dirname, '../.env') }),
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({filename: 'styles.css'}),
     new HtmlWebpackPlugin({
