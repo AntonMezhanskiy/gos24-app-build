@@ -108,10 +108,12 @@ ipcMain.on('show-logout-btn', (event, args) => {
 
 function createWindow () {
   // Проверяем в каком ось запущен приложение
-  if (!isOldWindows()) {
+  if (isOldWindows()) {
     mainWindow = createBrowserOtherWindow({
       width: 180,
       height: 400,
+      alwaysOnTop: !isDevelopment,
+      skipTaskbar: !isDevelopment,
     });
 
     // Скрываем дефолтное меню `File | ... | Help`
