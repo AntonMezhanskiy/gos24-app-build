@@ -108,10 +108,10 @@ ipcMain.on('show-logout-btn', (event, args) => {
 
 function createWindow () {
   // Проверяем в каком ось запущен приложение
-  if (isOldWindows()) {
+  if (!isOldWindows()) {
     mainWindow = createBrowserOtherWindow({
-      width: 230,
-      height: 510,
+      width: 180,
+      height: 400,
     });
 
     // Скрываем дефолтное меню `File | ... | Help`
@@ -146,7 +146,9 @@ function createWindow () {
 
   // создаем новый `Tray`
   // *** переменную `tray` объявил глобально, потому что
-  // *** винде запускается мусорщик, в определенную интервал времени и очищает `Tray`
+  // *** винде запускается мусорщик, в определенную интервал времени и обновляет `Tray`
+  // *** и во время обновление он должен удалить текущую и создать новое
+  // *** крч как то так :D если что почитайте  в инете
   tray = new Tray(trayIcon);
   tray.setToolTip('gos24.kz — v' + currentVersion);
 

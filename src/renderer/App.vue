@@ -8,6 +8,7 @@
     export default {
         name: 'gos24-electron',
         created () {
+            document.title = 'Госсектор24';
             this.$electron.ipcRenderer.on('logout', async () => {
                 await this.$store.commit('LOGOUT_USER');
                 await this.$bus.$emit('changeUser')

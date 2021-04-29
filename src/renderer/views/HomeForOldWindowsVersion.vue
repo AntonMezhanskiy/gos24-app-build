@@ -82,15 +82,15 @@
             cursor: pointer;
             position: relative;
             svg {
-                width: 50px;
-                height: 50px;
+                width: 30px;
+                height: 30px;
                 fill: $blue;
-                margin-bottom: 1rem;
+                margin-bottom: 13px;
             }
             &:after {
                 content: attr(data-value);
                 font-weight: 500;
-                font-size: 120%;
+                font-size: 100%;
             }
             &[data-notify-count]:not([data-notify-count="0"]):before {
                 content: attr(data-notify-count);
