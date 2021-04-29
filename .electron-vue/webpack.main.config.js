@@ -4,6 +4,7 @@ process.env.BABEL_ENV = 'main';
 const path = require('path');
 const { dependencies } = require('../package.json');
 const webpack = require('webpack');
+const Dotenv                = require('dotenv-webpack');
 
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 
@@ -49,6 +50,7 @@ let mainConfig = {
   },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
+    new Dotenv({ path: process.env.NODE_ENV === 'production' ? path.join(__dirname, '../.env.prod') : path.join(__dirname, '../.env') })
   ],
   resolve: {
     extensions: ['.js', '.json', '.node']
