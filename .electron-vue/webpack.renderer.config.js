@@ -11,6 +11,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
+const Dotenv                = require('dotenv-webpack');
 
 /**
  * List of node_modules to include in webpack bundle
@@ -121,6 +122,7 @@ let rendererConfig = {
   },
   plugins: [
     new VueLoaderPlugin(),
+    new Dotenv({ path: process.env.NODE_ENV === 'production' ? path.join(__dirname, '../.env.prod') : path.join(__dirname, '../.env') }),
     new MiniCssExtractPlugin({filename: 'styles.css'}),
     new HtmlWebpackPlugin({
       filename: 'index.html',

@@ -162,7 +162,6 @@ function createWindow () {
     // Дев тулс показываем только в режиме разработки
     showDevTools(mainWindow)
   } else {
-
     // автообновление приложение
     // *** запускается фоновом режиме
     updateApp(mainWindow)

@@ -1,15 +1,9 @@
 import axios from 'axios';
 import store from './store'
 import $electron from './vueElectron'
-const isDev = process.env.NODE_ENV === 'development';
-let url = 'https://gos24.kz/api/v2';
 
-if (isDev) {
-    // url = 'http://localhost:8000/api/v2';
-    url = 'http://test.gos24.kz/api/v2';
-}
 const $axios = axios.create({
-    baseURL: url
+    baseURL: process.env.VUE_APP_API_URL + '/api/v2'
 });
 
 $axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
