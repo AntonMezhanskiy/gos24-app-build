@@ -3,7 +3,8 @@ import store from './store'
 import $electron from './vueElectron'
 
 const $axios = axios.create({
-    baseURL: process.env.VUE_APP_API_URL + '/api/v2'
+    baseURL: process.env.VUE_APP_API_URL + '/api/v2',
+    withCredentials: true
 });
 
 $axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';

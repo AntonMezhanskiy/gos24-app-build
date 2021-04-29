@@ -74,6 +74,7 @@ export function createBrowserWindow (options = {} ) {
         icon: icon,
         show: false,
         webPreferences: {
+            webSecurity: true,
             enableRemoteModule: true,
             nodeIntegration: true,
             defaultEncoding: 'UTF-8'
@@ -94,7 +95,7 @@ export function createBrowserOtherWindow (options = {}) {
         icon: icon,
         show: false,
         webPreferences: {
-            webSecurity: false
+            webSecurity: true
         },
         ...options
     })
