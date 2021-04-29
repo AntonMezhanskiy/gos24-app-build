@@ -1,5 +1,5 @@
 {
-  "productName": "gos24-desktop",
+  "productName": "gos24.kz",
   "appId": "kz.gos24",
   "directories": {
     "output": "build/${version}"
@@ -15,7 +15,7 @@
   ],
   "win": {
     "icon": "icons/icon1.ico",
-    "artifactName": "${productName}-${arch}.${ext}",
+    "artifactName": "gos24-desktop-${arch}.${ext}",
     "target": [
       {
         "target": "nsis",

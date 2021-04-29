@@ -1,7 +1,7 @@
 'use strict';
 /* eslint-disable */
 
-import {app, ipcMain, Notification, Tray, Menu, remote, protocol} from 'electron';
+import {app, ipcMain, Notification, Tray, Menu, remote, shell} from 'electron';
 import updateApp from './updater';
 
 app.disableHardwareAcceleration();
@@ -34,6 +34,9 @@ ipcMain.on('notify-on', (event, args) => {
     title: 'ИТС Госсектор24',
     body: 'У вас новое уведомление на сайте gos24.kz',
     icon: icon
+  });
+  Notify.on('click', ()=> {
+    shell.openExternal('https://gos24.kz/notification');
   });
   Notify.show();
 });
@@ -116,9 +119,6 @@ function createWindow () {
       skipTaskbar: !isDevelopment,
     });
 
-    // Скрываем дефолтное меню `File | ... | Help`
-    mainWindow.setMenu(null);
-
     // Показываем страницу для Старый версии винда
     mainWindow.loadURL(getUrl('/#/home-for-old', '#home-for-old'));
   } else {
@@ -127,6 +127,9 @@ function createWindow () {
     // Показываем Главную страницу
     mainWindow.loadURL(getUrl('', ''));
   }
+
+  // Скрываем дефолтное меню `File | ... | Help`
+  mainWindow.setMenu(null);
 
   // Унижтожаем окно полностью
   mainWindow.on('closed', () => {
