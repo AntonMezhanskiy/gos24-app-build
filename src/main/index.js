@@ -109,6 +109,11 @@ ipcMain.on('show-logout-btn', (event, args) => {
 });
 
 
+// Авто-запуск приложение при старте windows
+app.setLoginItemSettings({
+  openAtLogin: true,
+});
+
 function createWindow () {
   // Проверяем в каком ось запущен приложение
   if (isOldWindows()) {
