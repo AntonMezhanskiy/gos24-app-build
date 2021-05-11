@@ -62,14 +62,14 @@ export function createBrowserWindow (options = {} ) {
     const height = display.bounds.height;
     return new BrowserWindow({
         width: 250,
-        height: 500,
+        height: 600,
         x: width - 350,
-        y: height - 500,
+        y: height - 600,
         transparent: true,
         frame: false,
         focusable: false,
         resizable: false,
-        alwaysOnTop: !isDevelopment,
+        alwaysOnTop: !isDevelopment, // Поверх всего
         skipTaskbar: !isDevelopment,
         icon: icon,
         show: false,
@@ -88,7 +88,7 @@ export function createBrowserOtherWindow (options = {}) {
         height: 680,
         backgroundColor: '#f2f2f2',
         resizable: isDevelopment, // изменение ширины
-        maximizable: false,
+        maximizable: false, // полноэкран
         fullscreenable: false,
         fullscreen: false, // полноэкран
         minimizable: false,

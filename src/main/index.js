@@ -121,7 +121,7 @@ function createWindow () {
   if (isOldWindows()) {
     mainWindow = createBrowserOtherWindow({
       width: 180,
-      height: 400,
+      height: 490,
       alwaysOnTop: !isDevelopment,
       skipTaskbar: !isDevelopment,
     });
