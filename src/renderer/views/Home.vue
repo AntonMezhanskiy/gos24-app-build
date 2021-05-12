@@ -1,7 +1,12 @@
 <template>
     <div class="Home">
         <HomeSlot class="menu" v-slot="{ propData, change, isAuth, toggle }">
-            <div class="menu-open-button" @contextmenu="toggle" @click="toggle">
+            <div class="menu-open-button"
+                 @click="toggle"
+                 @mouseup="mouseup"
+                 @mousedown="mousedown"
+                 @mousemove.prevent.stop="mousemove"
+            >
                 <span :data-dot-show="propData.countNotify > 0" class="dot"></span>
                 <img class="hamburger-logo" src="../assets/emblem.png" alt="">
                 <span class="hamburger hamburger-1"></span>
@@ -51,11 +56,71 @@
 </template>
 
 <script>
-    import HomeSlot from '../components/common/Home'
+    import HomeSlot from '../components/common/Home';
+    let wX;
+    let wY;
+    let dragging = false;
+    // let animationId;
+    // let mouseX;
+    // let mouseY;
     export default {
         name: 'Home',
         components: {
             HomeSlot
+        },
+        data () {
+            return {
+                win: this.$electron.remote.getCurrentWindow()
+            }
+        },
+        created () {
+            // console.log(this.$electron.remote.getCurrentWindow().setIgnoreMouseEvents);
+        },
+        methods: {
+            mouseup (e) {
+                // console.log('mouseup')
+
+                // this.$electron.ipcRenderer.send('windowMoved');
+                // document.removeEventListener('mouseup', this.mouseup)
+                // window.cancelAnimationFrame(animationId)
+
+                dragging = false;
+            },
+            mousedown (e) {
+                // console.log('mousedown', this.$electron);
+
+                // mouseX = e.clientX;
+                // mouseY = e.clientY;
+                //
+                // document.addEventListener('mouseup', this.mouseup)
+                // window.requestAnimationFrame(this.mousemove);
+
+                dragging = true;
+                wX = e.pageX;
+                wY = e.pageY;
+                // wX = e.pageX;
+                // wY = e.pageY;
+            },
+            mousemove (e) {
+                console.log('mousemove', e)
+
+                // this.$electron.ipcRenderer.send('windowMoving', { mouseX, mouseY });
+
+                // e.stopPropagation();
+                // e.preventDefault();
+
+                if (dragging) {
+                    const xLoc = e.screenX - wX;
+                    const yLoc = e.screenY - wY;
+                    // animationId = window.requestAnimationFrame(this.mousemove);
+
+                    try {
+                        this.$electron.remote.BrowserWindow.getFocusedWindow().setPosition(xLoc, yLoc);
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }
+            }
         }
     }
 </script>
@@ -226,6 +291,15 @@
             transform: scale(1.1, 1.1) translate3d(0, 0, 0);
             cursor: pointer;
             margin-bottom: 0;
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                z-index: 2;
+            }
         }
 
         .menu-open-button:hover {

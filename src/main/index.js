@@ -1,7 +1,7 @@
 'use strict';
 /* eslint-disable */
 
-import {app, ipcMain, Notification, Tray, Menu, remote, shell} from 'electron';
+import {app, ipcMain, Notification, Tray, Menu, screen, shell} from 'electron';
 import updateApp from './updater';
 
 app.disableHardwareAcceleration();
@@ -108,6 +108,17 @@ ipcMain.on('show-logout-btn', (event, args) => {
   tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
 });
 
+// Test
+
+ipcMain.on('windowMoving', (e, {mouseX, mouseY}) => {
+  const { x, y } = screen.getCursorScreenPoint()
+  mainWindow.setPosition(x - mouseX, y - mouseY)
+});
+
+ipcMain.on('windowMoved', () => {
+  // Do somehting when dragging stop
+});
+
 
 // Авто-запуск приложение при старте windows
 if (!isDevelopment) {
@@ -129,7 +140,9 @@ function createWindow () {
     // Показываем страницу для Старый версии винда
     mainWindow.loadURL(getUrl('/#/home-for-old', '#home-for-old'));
   } else {
-    mainWindow = createBrowserWindow();
+    mainWindow = createBrowserWindow({
+      clickThrough: 'pointer-events'
+    });
 
     // Показываем Главную страницу
     mainWindow.loadURL(getUrl('', ''));
