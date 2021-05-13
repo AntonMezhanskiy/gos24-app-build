@@ -108,17 +108,11 @@ ipcMain.on('show-logout-btn', (event, args) => {
   tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
 });
 
-// Test
-
+// Перезаписываем перемещение программы
 ipcMain.on('windowMoving', (e, {mouseX, mouseY}) => {
   const { x, y } = screen.getCursorScreenPoint()
   mainWindow.setPosition(x - mouseX, y - mouseY)
 });
-
-ipcMain.on('windowMoved', () => {
-  // Do somehting when dragging stop
-});
-
 
 // Авто-запуск приложение при старте windows
 if (!isDevelopment) {

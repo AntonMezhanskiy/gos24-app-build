@@ -3,9 +3,7 @@
         <HomeSlot class="menu" v-slot="{ propData, change, isAuth, toggle }">
             <div class="menu-open-button"
                  @click="toggle"
-                 @mouseup="mouseup"
                  @mousedown="mousedown"
-                 @mousemove.prevent.stop="mousemove"
             >
                 <span :data-dot-show="propData.countNotify > 0" class="dot"></span>
                 <img class="hamburger-logo" src="../assets/emblem.png" alt="">
@@ -57,12 +55,6 @@
 
 <script>
     import HomeSlot from '../components/common/Home';
-    let wX;
-    let wY;
-    let dragging = false;
-    // let animationId;
-    // let mouseX;
-    // let mouseY;
     export default {
         name: 'Home',
         components: {
@@ -70,56 +62,29 @@
         },
         data () {
             return {
-                win: this.$electron.remote.getCurrentWindow()
+                animationId: 0,
+                mouseX: 0,
+                mouseY: 0
             }
         },
-        created () {
-            // console.log(this.$electron.remote.getCurrentWindow().setIgnoreMouseEvents);
+        mounted () {
+            document.addEventListener('mousedown', this.mousedown)
         },
         methods: {
             mouseup (e) {
-                // console.log('mouseup')
-
-                // this.$electron.ipcRenderer.send('windowMoved');
-                // document.removeEventListener('mouseup', this.mouseup)
-                // window.cancelAnimationFrame(animationId)
-
-                dragging = false;
+                document.removeEventListener('mouseup', this.mouseup)
+                window.cancelAnimationFrame(this.animationId)
             },
             mousedown (e) {
-                // console.log('mousedown', this.$electron);
-
-                // mouseX = e.clientX;
-                // mouseY = e.clientY;
-                //
-                // document.addEventListener('mouseup', this.mouseup)
-                // window.requestAnimationFrame(this.mousemove);
-
-                dragging = true;
-                wX = e.pageX;
-                wY = e.pageY;
-                // wX = e.pageX;
-                // wY = e.pageY;
+                this.mouseX = e.clientX;
+                this.mouseY = e.clientY;
+                document.addEventListener('mouseup', this.mouseup)
+                this.animationId = window.requestAnimationFrame(this.mousemove);
             },
             mousemove (e) {
-                console.log('mousemove', e)
-
-                // this.$electron.ipcRenderer.send('windowMoving', { mouseX, mouseY });
-
-                // e.stopPropagation();
-                // e.preventDefault();
-
-                if (dragging) {
-                    const xLoc = e.screenX - wX;
-                    const yLoc = e.screenY - wY;
-                    // animationId = window.requestAnimationFrame(this.mousemove);
-
-                    try {
-                        this.$electron.remote.BrowserWindow.getFocusedWindow().setPosition(xLoc, yLoc);
-                    } catch (err) {
-                        console.log(err);
-                    }
-                }
+                this.$electron.ipcRenderer.send('windowMoving', { mouseX: this.mouseX, mouseY: this.mouseY });
+                window.cancelAnimationFrame(this.animationId)
+                this.animationId = window.requestAnimationFrame(this.mousemove);
             }
         }
     }
