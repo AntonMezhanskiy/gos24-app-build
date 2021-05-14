@@ -7,6 +7,12 @@
 <script>
     export default {
         name: 'Home',
+        props: {
+            isMove: {
+                type: Boolean,
+                default: false
+            }
+        },
         data () {
             return {
                 dictionary: {
@@ -34,6 +40,9 @@
         },
         methods: {
             toggle (type) {
+                if (this.isMove) {
+                    return;
+                }
                 const status = this.checked = !this.checked;
                 this.checked = status;
 

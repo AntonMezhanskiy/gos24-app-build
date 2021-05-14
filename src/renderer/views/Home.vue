@@ -1,6 +1,6 @@
 <template>
     <div class="Home">
-        <HomeSlot class="menu" v-slot="{ propData, change, isAuth, toggle }">
+        <HomeSlot class="menu" v-slot="{ propData, change, isAuth, toggle }" :isMove="isMove">
             <div class="menu-open-button"
                  @click="toggle"
                  @mousedown="mousedown"
@@ -55,6 +55,7 @@
 
 <script>
     import HomeSlot from '../components/common/Home';
+    let durationClick = 0
     export default {
         name: 'Home',
         components: {
@@ -62,26 +63,30 @@
         },
         data () {
             return {
+                isMove: false,
                 animationId: 0,
                 mouseX: 0,
                 mouseY: 0
             }
         },
         mounted () {
-            document.addEventListener('mousedown', this.mousedown)
+            // document.addEventListener('mousedown', this.mousedown)
         },
         methods: {
             mouseup (e) {
                 document.removeEventListener('mouseup', this.mouseup)
-                window.cancelAnimationFrame(this.animationId)
+                window.cancelAnimationFrame(this.animationId);
+                this.isMove = durationClick > 8;
+                durationClick = 0
             },
             mousedown (e) {
                 this.mouseX = e.clientX;
                 this.mouseY = e.clientY;
-                document.addEventListener('mouseup', this.mouseup)
+                document.addEventListener('mouseup', this.mouseup, true)
                 this.animationId = window.requestAnimationFrame(this.mousemove);
             },
             mousemove (e) {
+                durationClick++
                 this.$electron.ipcRenderer.send('windowMoving', { mouseX: this.mouseX, mouseY: this.mouseY });
                 window.cancelAnimationFrame(this.animationId)
                 this.animationId = window.requestAnimationFrame(this.mousemove);
