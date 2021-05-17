@@ -17,6 +17,25 @@ export const icon = path.join(__static, 'icons/icon.png');
 
 export const trayIcon = path.join(__static, 'icons/icon16x16.png');
 
+const defaultBrowserWindowOptions = {
+    resizable: isDevelopment, // изменение ширины
+    maximizable: false, // полноэкран
+    fullscreenable: false,
+    fullscreen: false, // полноэкран
+    minimizable: false,
+    alwaysOnTop: !isDevelopment, // Поверх всего
+    skipTaskbar: !isDevelopment,
+    icon: icon,
+    show: false,
+    focusable: false,
+    webPreferences: {
+        webSecurity: true,
+        enableRemoteModule: true,
+        nodeIntegration: true,
+        defaultEncoding: 'UTF-8'
+    },
+}
+
 export function changeIsQuiting (val) {
     isQuiting = val
 }
@@ -61,42 +80,27 @@ export function createBrowserWindow (options = {} ) {
     const width = display.bounds.width;
     const height = display.bounds.height;
     return new BrowserWindow({
-        width: 250,
-        height: 600,
-        x: width - 350,
-        y: height - 600,
+        ...defaultBrowserWindowOptions,
+        width: 70,
+        height: 70,
+        x: width - 140,
+        y: height - 140,
         transparent: true,
         frame: false,
-        focusable: false,
-        resizable: false,
-        alwaysOnTop: !isDevelopment, // Поверх всего
-        skipTaskbar: !isDevelopment,
-        icon: icon,
-        show: false,
-        webPreferences: {
-            webSecurity: true,
-            enableRemoteModule: true,
-            nodeIntegration: true,
-            defaultEncoding: 'UTF-8'
-        },
         ...options
     })
 }
+
 export function createBrowserOtherWindow (options = {}) {
+    // Установливаем цвет дефолтного задного фона
+    if (options && !options.transparent) {
+        options.backgroundColor = options.backgroundColor ? options.backgroundColor : '#f2f2f2'
+    }
+
     return new BrowserWindow({
+        ...defaultBrowserWindowOptions,
         width: 400,
         height: 680,
-        backgroundColor: '#f2f2f2',
-        resizable: isDevelopment, // изменение ширины
-        maximizable: false, // полноэкран
-        fullscreenable: false,
-        fullscreen: false, // полноэкран
-        minimizable: false,
-        icon: icon,
-        show: false,
-        webPreferences: {
-            webSecurity: true
-        },
         ...options
     })
 }

@@ -21,9 +21,7 @@ import {
   getUrl
 } from './utils';
 
-let mainWindow;
-let childWindow;
-let tray = null;
+let mainWindow, childWindow, modalWindow, tray = null;
 
 app.on('before-quit', function () {
   changeIsQuiting(true)
@@ -108,10 +106,46 @@ ipcMain.on('show-logout-btn', (event, args) => {
   tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
 });
 
+//
+ipcMain.on('toogle-modal', (e, args) => {
+  modalWindow.webContents.send('modal-show', args)
+  if (args) {
+    modalWindow.show()
+  } else {
+    modalWindow.hide();
+  }
+});
+
 // Перезаписываем перемещение программы
 ipcMain.on('windowMoving', (e, {mouseX, mouseY}) => {
   const { x, y } = screen.getCursorScreenPoint()
   mainWindow.setPosition(x - mouseX, y - mouseY)
+});
+
+// FIX me
+ipcMain.on('windowMoved', (e, data) => {
+  const { x, y } = screen.getCursorScreenPoint(),
+      { size: { width, height } } = screen.getPrimaryDisplay(),
+      limitation = 200;
+  const windwoSize = {
+    x,
+    y,
+    width: width - limitation,
+    height: height - limitation
+  }
+
+  let result = {
+    left: windwoSize.x < limitation,
+    right: windwoSize.x > windwoSize.width,
+    top: windwoSize.y < limitation,
+    bottom: windwoSize.y > windwoSize.height,
+    default: !(windwoSize.x < limitation || windwoSize.x > windwoSize.width || windwoSize.y < limitation || windwoSize.y > windwoSize.height)
+  }
+
+  modalWindow.setPosition(x, y);
+
+  mainWindow.webContents.send('windowMoved', result)
+  // mainWindow.setPosition(x - mouseX, y - mouseY)
 });
 
 // Авто-запуск приложение при старте windows
@@ -121,14 +155,32 @@ if (!isDevelopment) {
   });
 }
 
+function MainModal () {
+  const display = screen.getPrimaryDisplay();
+  const width = display.bounds.width;
+  const height = display.bounds.height;
+
+  modalWindow = createBrowserWindow({
+    width: 260,
+    height: 350,
+    x: width - 335,
+    y: height - 500,
+  });
+
+  // Ссылка на Модал
+  modalWindow.loadURL(getUrl('/#/home-modal', '#home-modal'));
+  if (isDevelopment) {
+    // Дев тулс показываем только в режиме разработки
+    showDevTools(modalWindow)
+  }
+}
+
 function createWindow () {
   // Проверяем в каком ось запущен приложение
   if (isOldWindows()) {
     mainWindow = createBrowserOtherWindow({
       width: 180,
       height: 490,
-      alwaysOnTop: !isDevelopment,
-      skipTaskbar: !isDevelopment,
     });
 
     // Показываем страницу для Старый версии винда
@@ -138,8 +190,11 @@ function createWindow () {
       clickThrough: 'pointer-events'
     });
 
-    // Показываем Главную страницу
+    // Ссылка Главную страницу
     mainWindow.loadURL(getUrl('', ''));
+
+    // Modal
+    MainModal()
   }
 
   // Скрываем дефолтное меню `File | ... | Help`
@@ -148,6 +203,7 @@ function createWindow () {
   // Унижтожаем окно полностью
   mainWindow.on('closed', () => {
     mainWindow = null
+    modalWindow = null
   });
 
   // Модель надо установить обязательно

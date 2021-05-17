@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '../views/Home.vue';
 import HomeForOldWindowsVersion from '../views/HomeForOldWindowsVersion.vue';
+import ContextMenu from '../views/ContextMenu.vue';
 import Login from '../views/Login.vue';
 
 Vue.use(Router);
@@ -14,6 +15,14 @@ const routes = [
         meta: {
             title: 'Центр уведомлений',
             auth: true
+        }
+    },
+    {
+        path: '/home-modal',
+        name: 'ContextMenu',
+        component: ContextMenu,
+        meta: {
+            title: 'Центр уведомлений'
         }
     },
     {
