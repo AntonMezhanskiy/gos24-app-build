@@ -3,7 +3,7 @@
         <div class="menu-open-button"
              @click="toggle()"
              @mousedown="mousedown">
-            <span :data-dot-show="countNotify > 0" class="dot"></span>
+            <span :data-dot-show="haveNotify" class="dot"></span>
             <img class="hamburger-logo" src="../assets/emblem.png" alt="">
             <span class="hamburger hamburger-1"></span>
             <span class="hamburger hamburger-3"></span>
@@ -19,8 +19,8 @@
             return {
                 isMove: false,
                 checked: false,
-                countNotify: 0,
                 animationId: 0,
+                haveNotify: false,
                 mouseX: 0,
                 mouseY: 0
             }
@@ -30,8 +30,11 @@
                 this.toggle()
             });
 
-            this.$electron.ipcRenderer.on('update-window', (event, data) => {
+            this.$electron.ipcRenderer.on('update-client:pageToggle', (event, data) => {
                 this.toggle()
+            });
+            this.$electron.ipcRenderer.on('update-client:NOTIFY_PING', (event, data) => {
+                this.haveNotify = data > 0
             });
         },
         methods: {
@@ -172,4 +175,15 @@ $blue: #094380;
             }
         }
     }
+@keyframes load {
+    0% {
+        border: 0 solid transparent;
+    }
+    50% {
+        border: 5px solid #fff;
+    }
+    100% {
+        border: 0 solid transparent;
+    }
+}
 </style>

@@ -43,21 +43,15 @@ ipcMain.on('close-app', (event, args) => {
   app.quit()
 });
 
-// [Баг?] Когда авторизуемся с другого окна, store не обновляется.
-// связал обновленные данные таким образом
-ipcMain.on('update-user', (event, data) => {
-  mainWindow.webContents.send('update-client-user', data)
-});
-
 // Когда закрываем другие окна то сообщаем главному окну что, что то изменилось
 ipcMain.on('close-window', (e, args) => {
   mainWindow.close();
   mainWindow.webContents.send('close-window')
 })
 
-// Когда хотим что то обновить
-ipcMain.on('update-window', (e, args) => {
-  mainWindow.webContents.send('update-window')
+// [FIX ME] В разных окнах электорна создается новый экземпляр Vue и между ними нет связи...
+ipcMain.on('update-client', (e, prefix, data) => {
+  mainWindow.webContents.send('update-client:'+prefix, data)
 })
 
 // Показываем страницу авторизации
@@ -175,7 +169,7 @@ ipcMain.on('windowMoved', (e, data) => {
   }
 
   positionNEW.x = mainX - 260 + 70
-  positionNEW.y = mainY - 350
+  positionNEW.y = mainY - 410
 
   if (position.top) {
     positionNEW.y = mainY + 80
@@ -206,9 +200,9 @@ function MainModal () {
 
   modalWindow = createBrowserWindow({
     width: 260,
-    height: 350,
+    height: 400,
     x: width - 330,
-    y: height - 500,
+    y: height - 550,
   });
 
   // Ссылка на Модал

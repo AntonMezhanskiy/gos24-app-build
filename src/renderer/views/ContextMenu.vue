@@ -49,12 +49,14 @@
 
 <script>
     import HomeSlot from '../components/common/Home';
+    import {subscriptionToElectron} from '../Mixin';
 
     export default {
         name: 'ContextMenu',
         components: {
             HomeSlot
         },
+        mixins: [subscriptionToElectron],
         data () {
             return {
                 dictionary: {
@@ -64,26 +66,24 @@
                     collapseApp: 'collapse-app'
                 },
                 checked: false,
+                countNotify: 0,
                 windowPosition: {
                     top: false,
                     left: false,
                     right: true,
                     bottom: true
-                },
-                countNotify: 0
+                }
             }
         },
         created () {
+            this.$electron.ipcRenderer.on('windowMoved', (event, data) => {
+                this.windowPosition = data
+            });
             this.$bus.$on('changeUser', async () => {
                 await this.socketConn('leave');
                 await this.$store.commit('LOGOUT_USER');
                 await this.$electron.ipcRenderer.send('page-auth');
             });
-
-            this.$electron.ipcRenderer.on('windowMoved', (event, data) => {
-                this.windowPosition = data
-            });
-
             this.$electron.ipcRenderer.on('modal-show', (event, data) => {
                 this.checked = data
             });
@@ -103,7 +103,7 @@
                     this.$electron.ipcRenderer.send('close-child-window');
                 }
                 if (type !== this.dictionary.collapseApp) {
-                    this.$electron.ipcRenderer.send('update-window');
+                    this.$electron.ipcRenderer.send('update-client', 'pageToggle');
                 }
             },
             change (type, data) {
@@ -127,7 +127,6 @@
             socketConn (status) {
                 if (status === 'join') {
                     this.$socket.client.emit('join', this.roomName);
-                    this.updateNotifi();
                     return
                 }
                 this.$socket.client.emit('leave', this.roomName);
@@ -146,6 +145,7 @@
             isAuth () {
                 const auth = this.$store.getters['isAuth'];
                 if (auth) {
+                    this.updateNotifi();
                     this.socketConn('join');
                 }
                 return auth
@@ -159,6 +159,7 @@
                 if (+count > 0) {
                     this.$electron.ipcRenderer.send('notify-on');
                 }
+                this.$electron.ipcRenderer.send('update-client', 'NOTIFY_PING', count);
                 this.countNotify = +count;
             },
             connect () {
@@ -185,7 +186,7 @@ $margin: 70;
         font-size: 20px;
         flex-direction: column;
         position: relative;
-        min-height: 330px;
+        min-height: 400px;
         overflow: hidden;
     }
 
@@ -328,30 +329,5 @@ $margin: 70;
                 }
             }
         }
-        &.left:not(.bottom) {
-            .menu-item {
-                margin-bottom: 0;
-                margin-top: -#{$margin}px;
-                top: 0;
-                bottom: unset;
-            }
-            @for $i from 1 through $columns {
-                .menu-item:nth-child(#{$i}) {
-                    transition-duration: #{180 * $i}ms;
-                    transform: translate3d(0, #{$margin * $i}px, 0);
-                }
-            }
-        }
     }
-@keyframes load {
-    0% {
-        border: 0 solid transparent;
-    }
-    50% {
-        border: 5px solid #fff;
-    }
-    100% {
-        border: 0 solid transparent;
-    }
-}
 </style>
