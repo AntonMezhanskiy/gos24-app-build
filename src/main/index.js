@@ -49,10 +49,23 @@ ipcMain.on('update-user', (event, data) => {
   mainWindow.webContents.send('update-client-user', data)
 });
 
+// Когда закрываем другие окна то сообщаем главному окну что, что то изменилось
+ipcMain.on('close-window', (e, args) => {
+  mainWindow.close();
+  mainWindow.webContents.send('close-window')
+})
+
+// Когда хотим что то обновить
+ipcMain.on('update-window', (e, args) => {
+  mainWindow.webContents.send('update-window')
+})
+
 // Показываем страницу авторизации
 // с его настройками
 ipcMain.on('page-auth', (event, args) => {
-  childWindow = createBrowserOtherWindow();
+  childWindow = createBrowserOtherWindow({
+    focusable: true,
+  });
 
   if (isDevelopment) {
     showDevTools(childWindow)
@@ -106,7 +119,7 @@ ipcMain.on('show-logout-btn', (event, args) => {
   tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
 });
 
-//
+//  Открываем/закрываем модалку
 ipcMain.on('toogle-modal', (e, args) => {
   modalWindow.webContents.send('modal-show', args)
   if (args) {
@@ -122,30 +135,60 @@ ipcMain.on('windowMoving', (e, {mouseX, mouseY}) => {
   mainWindow.setPosition(x - mouseX, y - mouseY)
 });
 
-// FIX me
+// После перемещение указываем позицую
 ipcMain.on('windowMoved', (e, data) => {
+
+  // Текущая позиция Курсора
   const { x, y } = screen.getCursorScreenPoint(),
+
+      // Размеры Экрана
       { size: { width, height } } = screen.getPrimaryDisplay(),
-      limitation = 200;
-  const windwoSize = {
-    x,
-    y,
-    width: width - limitation,
-    height: height - limitation
+
+      // Получить новую позициую приложение
+      [mainX, mainY] = mainWindow.getPosition(),
+
+      // Оступы от экрана
+      limitation = 400,
+
+      // Ограниченные размеры
+      windwoSize = {
+          x,
+          y,
+          width: width - limitation,
+          height: height - limitation
+      },
+
+      // Узнаем позицию приложение
+      position = {
+          left: windwoSize.x < limitation,
+          right: windwoSize.x > windwoSize.width,
+          top: windwoSize.y < limitation,
+          bottom: windwoSize.y > windwoSize.height,
+          default: !(windwoSize.x < limitation || windwoSize.x > windwoSize.width || windwoSize.y < limitation || windwoSize.y > windwoSize.height)
+      };
+
+  // Дальше указываем новую позицию относительно
+  // от ограниченных размеров
+  let positionNEW = {
+    x: 0,
+    y: y,
   }
 
-  let result = {
-    left: windwoSize.x < limitation,
-    right: windwoSize.x > windwoSize.width,
-    top: windwoSize.y < limitation,
-    bottom: windwoSize.y > windwoSize.height,
-    default: !(windwoSize.x < limitation || windwoSize.x > windwoSize.width || windwoSize.y < limitation || windwoSize.y > windwoSize.height)
+  positionNEW.x = mainX - 260 + 70
+  positionNEW.y = mainY - 350
+
+  if (position.top) {
+    positionNEW.y = mainY + 80
+  }
+  if (position.left) {
+    positionNEW.x = mainX
   }
 
-  modalWindow.setPosition(x, y);
+  // Установливаем новую позицию бля Модального
+  modalWindow.setPosition(positionNEW.x, positionNEW.y);
 
-  mainWindow.webContents.send('windowMoved', result)
-  // mainWindow.setPosition(x - mouseX, y - mouseY)
+  // Сообщаем нужным окнам что было перемещение окон
+  [mainWindow, modalWindow].forEach(winItem => winItem.webContents.send('windowMoved', position))
 });
 
 // Авто-запуск приложение при старте windows
@@ -155,6 +198,7 @@ if (!isDevelopment) {
   });
 }
 
+// Создаем модалку
 function MainModal () {
   const display = screen.getPrimaryDisplay();
   const width = display.bounds.width;
@@ -163,7 +207,7 @@ function MainModal () {
   modalWindow = createBrowserWindow({
     width: 260,
     height: 350,
-    x: width - 335,
+    x: width - 330,
     y: height - 500,
   });
 
@@ -175,6 +219,7 @@ function MainModal () {
   }
 }
 
+// создаем главное окно
 function createWindow () {
   // Проверяем в каком ось запущен приложение
   if (isOldWindows()) {
@@ -227,8 +272,10 @@ function createWindow () {
   tray = new Tray(trayIcon);
   tray.setToolTip('gos24.kz — v' + currentVersion);
 
+  // Событие когда кликаем на иконку
   tray.on('click', () => mainWindow.show());
 
+  // Установливаем меню когда нажимаем ПКМ
   tray.setContextMenu(Menu.buildFromTemplate(createContextMenu(mainWindow)));
 
   if (isDevelopment) {

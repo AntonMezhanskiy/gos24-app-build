@@ -26,8 +26,12 @@
             }
         },
         mounted () {
-            this.$electron.ipcRenderer.on('windowMoved', (event, data) => {
-                console.log('data', data)
+            this.$electron.ipcRenderer.on('close-window', (event, data) => {
+                this.toggle()
+            });
+
+            this.$electron.ipcRenderer.on('update-window', (event, data) => {
+                this.toggle()
             });
         },
         methods: {
@@ -36,7 +40,6 @@
                     return;
                 }
 
-                console.log('click')
                 const status = this.checked = !this.checked;
                 this.checked = status;
                 this.$electron.ipcRenderer.send('toogle-modal', status)
@@ -44,7 +47,7 @@
             mouseup (e) {
                 document.removeEventListener('mouseup', this.mouseup)
                 window.cancelAnimationFrame(this.animationId);
-                if (durationClick > 10) {
+                if (durationClick > 12) {
                     this.isMove = true;
                     this.$electron.ipcRenderer.send('windowMoved')
                 }
