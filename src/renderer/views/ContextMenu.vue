@@ -129,12 +129,14 @@
                     return
                 }
                 this.$socket.client.emit('leave', this.roomName);
-                this.countNotify = 0
+                this.countNotify = 0;
+                this.$electron.ipcRenderer.send('update-client', 'NOTIFY_PING', 0);
             },
             async updateNotifi () {
                 try {
                     const {data} = await this.$axios.get('notification/ping/');
                     this.countNotify = data.count;
+                    this.$electron.ipcRenderer.send('update-client', 'NOTIFY_PING', data.count);
                 } catch (error) {
                     console.log('при проверке Уведомления  ошибка ', error)
                 }
@@ -158,7 +160,7 @@
                 if (+count > 0) {
                     this.$electron.ipcRenderer.send('notify-on');
                 }
-                this.$electron.ipcRenderer.send('update-client', 'NOTIFY_PING', count);
+                this.$electron.ipcRenderer.send('update-client', 'NOTIFY_PING', +count);
                 this.countNotify = +count;
             },
             connect () {
