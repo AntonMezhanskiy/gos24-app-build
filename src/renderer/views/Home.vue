@@ -64,7 +64,7 @@
                 this.animationId = window.requestAnimationFrame(this.mousemove);
             },
             mousemove (e) {
-                durationClick++
+                durationClick++;
                 this.$electron.ipcRenderer.send('windowMoving', { mouseX: this.mouseX, mouseY: this.mouseY });
                 window.cancelAnimationFrame(this.animationId)
                 this.animationId = window.requestAnimationFrame(this.mousemove);

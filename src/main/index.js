@@ -129,8 +129,25 @@ ipcMain.on('toogle-modal', (e, args) => {
 
 // Перезаписываем перемещение программы
 ipcMain.on('windowMoving', (e, {mouseX, mouseY}) => {
-  const { x, y } = screen.getCursorScreenPoint()
-  mainWindow.setPosition(x - mouseX, y - mouseY)
+  // Размеры Экрана
+  const { size } = screen.getPrimaryDisplay();
+
+  // Позиция курсора
+  const { x, y } = screen.getCursorScreenPoint();
+
+  // Отступ
+  const margin = 40;
+
+  const width = size.width - margin;
+  const height = size.height - margin;
+
+  // x < width  - x больше width
+  // y < height - y больше height
+  // x > margin - x больше margin
+  // y > margin - y больше margin
+  if (x < width && y < height && x > margin && y > margin)  {
+    mainWindow.setPosition(x - mouseX, y - mouseY)
+  }
 });
 
 // После перемещение указываем позицую
