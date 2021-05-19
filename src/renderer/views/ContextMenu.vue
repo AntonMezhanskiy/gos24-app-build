@@ -49,14 +49,12 @@
 
 <script>
     import HomeSlot from '../components/common/Home';
-    import {subscriptionToElectron} from '../Mixin';
 
     export default {
         name: 'ContextMenu',
         components: {
             HomeSlot
         },
-        mixins: [subscriptionToElectron],
         data () {
             return {
                 dictionary: {
@@ -78,7 +76,8 @@
         created () {
             this.$electron.ipcRenderer.on('windowMoved', (event, data) => {
                 this.windowPosition = data
-            });
+            })
+
             this.$bus.$on('changeUser', async () => {
                 await this.socketConn('leave');
                 await this.$store.commit('LOGOUT_USER');

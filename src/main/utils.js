@@ -105,7 +105,7 @@ export function createBrowserOtherWindow (options = {}) {
     })
 }
 
-export function createContextMenu (win) {
+export function createContextMenu (win, modalWin) {
     return [
         {
             label: 'Показать приложение',
@@ -119,6 +119,7 @@ export function createContextMenu (win) {
             click: () => {
                 win.show();
                 win.webContents.send('logout')
+                modalWin.webContents.send('logout')
             }
         },
         {

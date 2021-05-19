@@ -51,7 +51,11 @@ ipcMain.on('close-window', (e, args) => {
 
 // [FIX ME] В разных окнах электорна создается новый экземпляр Vue и между ними нет связи...
 ipcMain.on('update-client', (e, prefix, data) => {
-  mainWindow.webContents.send('update-client:'+prefix, data)
+  [mainWindow, modalWindow, childWindow].forEach(wind => {
+    if (wind) {
+      wind.webContents.send('update-client:'+prefix, data)
+    }
+  })
 })
 
 // Показываем страницу авторизации
@@ -108,7 +112,7 @@ app.on('activate', () => {
 // по этому с клиента я признак отправляю что пользователь авторизован или нет
 // если авторизован то в контексте `tray` показываем кнопку `Cменить аккаунт`
 ipcMain.on('show-logout-btn', (event, args) => {
-  const contextMenu = createContextMenu(mainWindow);
+  const contextMenu = createContextMenu(mainWindow, modalWindow);
   contextMenu[1].visible = args;
   tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
 });
@@ -207,6 +211,7 @@ function MainModal () {
 
   // Ссылка на Модал
   modalWindow.loadURL(getUrl('/#/home-modal', '#home-modal'));
+
   if (isDevelopment) {
     // Дев тулс показываем только в режиме разработки
     showDevTools(modalWindow)
@@ -254,6 +259,7 @@ function createWindow () {
     closeApp(mainWindow, event)
   });
 
+  // Тут все понятно
   mainWindow.once('ready-to-show',()=>{
     mainWindow.show()
   });
@@ -270,7 +276,7 @@ function createWindow () {
   tray.on('click', () => mainWindow.show());
 
   // Установливаем меню когда нажимаем ПКМ
-  tray.setContextMenu(Menu.buildFromTemplate(createContextMenu(mainWindow)));
+  tray.setContextMenu(Menu.buildFromTemplate(createContextMenu(mainWindow, modalWindow)));
 
   if (isDevelopment) {
     // Дев тулс показываем только в режиме разработки
