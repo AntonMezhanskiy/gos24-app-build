@@ -242,6 +242,7 @@ function createWindow () {
     mainWindow = createBrowserOtherWindow({
       width: 180,
       height: 490,
+      focusable: true,
     });
 
     // Показываем страницу для Старый версии винда
