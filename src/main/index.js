@@ -129,81 +129,77 @@ ipcMain.on('toogle-modal', (e, args) => {
 
 // Перезаписываем перемещение программы
 ipcMain.on('windowMoving', (e, {mouseX, mouseY}) => {
-  // Размеры Экрана
-  const { bounds } = screen.getPrimaryDisplay();
+    // Размеры Экрана
+    const { size: { width: displayWidth, height: displayHeight } } = screen.getPrimaryDisplay()
 
-  // Позиция курсора
-  const { x, y } = screen.getCursorScreenPoint();
+    // Текущая позиция Курсора
+    const { x, y } = screen.getCursorScreenPoint();
 
-  // Отступ
-  const margin = 40;
-  const width = bounds.width - margin;
-  const height = bounds.height - margin;
+    // Отступ
+    const margin = 40;
+    const width = displayWidth - margin;
+    const height = displayHeight - margin;
 
-  // x < width  - x больше width || правая сторона экрана
-  // y < height - y больше height || нижная сторона экрана
-  // x > margin - x больше margin || левая сторона экрана
-  // y > margin - y больше margin || верхная сторона экрана
-  if (x < width && y < height && x > margin && y > margin)  {
-    mainWindow.setPosition(x - mouseX, y - mouseY)
-  }
+    // x < width  - x больше width || правая сторона экрана
+    // y < height - y больше height || нижная сторона экрана
+    // x > margin - x больше margin || левая сторона экрана
+    // y > margin - y больше margin || верхная сторона экрана
+    if (x < width && y < height && x > margin && y > margin)  {
+        mainWindow.setPosition(x - mouseX, y - mouseY)
+    }
+
+
+    // Получить новую позициую приложение
+    const [mainX, mainY] = mainWindow.getPosition(),
+
+        // Оступы от экрана
+        limitation = 400,
+
+        // Ограниченные размеры
+        windwoSize = {
+            x,
+            y,
+            width: displayWidth - limitation,
+            height: displayHeight - limitation
+        },
+
+        // Узнаем позицию приложение
+        position = {
+            left: windwoSize.x < limitation,
+            right: windwoSize.x > windwoSize.width,
+            top: windwoSize.y < limitation,
+            bottom: windwoSize.y > windwoSize.height,
+            default: !(windwoSize.x < limitation || windwoSize.x > windwoSize.width || windwoSize.y < limitation || windwoSize.y > windwoSize.height)
+        };
+
+    // Дальше указываем новую позицию относительно
+    // от ограниченных размеров
+    let positionNEW = {
+        x: 0,
+        y: 0,
+    }
+
+    positionNEW.x = mainX - 260 + 70
+    positionNEW.y = mainY - 410
+
+    if (position.top) {
+        positionNEW.y = mainY + 80
+    }
+    if (position.left) {
+        positionNEW.x = mainX
+    }
+
+    // Установливаем новую позицию бля Модального
+    modalWindow.setPosition(positionNEW.x, positionNEW.y);
+
+    // Сообщаем нужным окнам что было перемещение окон
+    [mainWindow, modalWindow].forEach(winItem => winItem.webContents.send('windowMoved', position))
 
 });
 
 // После перемещение указываем позицую
 ipcMain.on('windowMoved', (e, data) => {
-
-  // Текущая позиция Курсора
-  const { x, y } = screen.getCursorScreenPoint(),
-
-      // Размеры Экрана
-      { size: { width, height } } = screen.getPrimaryDisplay(),
-
-      // Получить новую позициую приложение
-      [mainX, mainY] = mainWindow.getPosition(),
-
-      // Оступы от экрана
-      limitation = 400,
-
-      // Ограниченные размеры
-      windwoSize = {
-          x,
-          y,
-          width: width - limitation,
-          height: height - limitation
-      },
-
-      // Узнаем позицию приложение
-      position = {
-          left: windwoSize.x < limitation,
-          right: windwoSize.x > windwoSize.width,
-          top: windwoSize.y < limitation,
-          bottom: windwoSize.y > windwoSize.height,
-          default: !(windwoSize.x < limitation || windwoSize.x > windwoSize.width || windwoSize.y < limitation || windwoSize.y > windwoSize.height)
-      };
-
-  // Дальше указываем новую позицию относительно
-  // от ограниченных размеров
-  let positionNEW = {
-    x: 0,
-    y: y,
-  }
-
-  positionNEW.x = mainX - 260 + 70
-  positionNEW.y = mainY - 410
-
-  if (position.top) {
-    positionNEW.y = mainY + 80
-  }
-  if (position.left) {
-    positionNEW.x = mainX
-  }
-
-  // Установливаем новую позицию бля Модального
-  modalWindow.setPosition(positionNEW.x, positionNEW.y);
-
-  // Сообщаем нужным окнам что было перемещение окон
-  [mainWindow, modalWindow].forEach(winItem => winItem.webContents.send('windowMoved', position))
+    // ... тут что нибудь
 });
 
 // Авто-запуск приложение при старте windows

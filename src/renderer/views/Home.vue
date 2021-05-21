@@ -19,6 +19,7 @@
             return {
                 isMove: false,
                 checked: false,
+                durationLimit: 4,
                 animationId: 0,
                 haveNotify: false,
                 mouseX: 0,
@@ -50,7 +51,7 @@
             mouseup (e) {
                 document.removeEventListener('mouseup', this.mouseup)
                 window.cancelAnimationFrame(this.animationId);
-                if (durationClick > 8) {
+                if (durationClick > this.durationLimit) {
                     this.isMove = true;
                     this.$electron.ipcRenderer.send('windowMoved')
                 }
@@ -66,7 +67,7 @@
             mousemove (e) {
                 durationClick++;
 
-                if (this.checked && durationClick > 8) {
+                if (this.checked && durationClick > this.durationLimit) {
                     this.checked = false;
                     this.$electron.ipcRenderer.send('toogle-modal', false)
                 }
