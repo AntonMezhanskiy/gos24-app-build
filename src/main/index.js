@@ -130,24 +130,24 @@ ipcMain.on('toogle-modal', (e, args) => {
 // Перезаписываем перемещение программы
 ipcMain.on('windowMoving', (e, {mouseX, mouseY}) => {
   // Размеры Экрана
-  const { size } = screen.getPrimaryDisplay();
+  const { bounds } = screen.getPrimaryDisplay();
 
   // Позиция курсора
   const { x, y } = screen.getCursorScreenPoint();
 
   // Отступ
   const margin = 40;
+  const width = bounds.width - margin;
+  const height = bounds.height - margin;
 
-  const width = size.width - margin;
-  const height = size.height - margin;
-
-  // x < width  - x больше width
-  // y < height - y больше height
-  // x > margin - x больше margin
-  // y > margin - y больше margin
+  // x < width  - x больше width || правая сторона экрана
+  // y < height - y больше height || нижная сторона экрана
+  // x > margin - x больше margin || левая сторона экрана
+  // y > margin - y больше margin || верхная сторона экрана
   if (x < width && y < height && x > margin && y > margin)  {
     mainWindow.setPosition(x - mouseX, y - mouseY)
   }
+
 });
 
 // После перемещение указываем позицую
@@ -221,7 +221,11 @@ function MainModal () {
 
   modalWindow = createBrowserWindow({
     width: 260,
+    minWidth: 260,
+    maxWidth: 260,
     height: 400,
+    minHeight: 400,
+    maxHeight: 400,
     x: width - 330,
     y: height - 550,
   });
@@ -248,9 +252,7 @@ function createWindow () {
     // Показываем страницу для Старый версии винда
     mainWindow.loadURL(getUrl('/#/home-for-old', '#home-for-old'));
   } else {
-    mainWindow = createBrowserWindow({
-      clickThrough: 'pointer-events'
-    });
+    mainWindow = createBrowserWindow();
 
     // Ссылка Главную страницу
     mainWindow.loadURL(getUrl('', ''));

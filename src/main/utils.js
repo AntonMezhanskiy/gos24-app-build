@@ -82,7 +82,11 @@ export function createBrowserWindow (options = {} ) {
     return new BrowserWindow({
         ...defaultBrowserWindowOptions,
         width: 70,
+        minWidth: 70,
+        maxWidth: 70,
         height: 70,
+        minHeight: 70,
+        maxHeight: 70,
         x: width - 140,
         y: height - 140,
         transparent: true,

@@ -70,9 +70,8 @@
                     this.checked = false;
                     this.$electron.ipcRenderer.send('toogle-modal', false)
                 }
-
-                this.$electron.ipcRenderer.send('windowMoving', { mouseX: this.mouseX, mouseY: this.mouseY });
                 window.cancelAnimationFrame(this.animationId)
+                this.$electron.ipcRenderer.send('windowMoving', { mouseX: this.mouseX, mouseY: this.mouseY });
                 this.animationId = window.requestAnimationFrame(this.mousemove);
             }
         }
