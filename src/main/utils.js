@@ -1,7 +1,9 @@
 /* eslint-disable */
 const path = require('path');
-
+// const DataStore = require('./DataStore').default;
 export const isDevelopment = process.env.NODE_ENV !== 'production';
+const DataStore = require('./DataStore').default;
+const Store = new DataStore()
 
 if (!isDevelopment) {
     global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
@@ -76,19 +78,31 @@ export function showDevTools (win) {
     });
 }
 export function createBrowserWindow (options = {} ) {
-    const display = screen.getPrimaryDisplay();
-    const width = display.bounds.width;
-    const height = display.bounds.height;
+    const width = 70,
+        height = 70;
+    let x, y;
+
+    if (Store.position.isDefault) {
+        const display = screen.getPrimaryDisplay();
+        const w = display.bounds.width;
+        const h = display.bounds.height;
+        x = w - width * 2
+        y = h - height * 2
+    } else {
+        x = Store.position.x
+        y = Store.position.y
+    }
+
     return new BrowserWindow({
         ...defaultBrowserWindowOptions,
-        width: 70,
-        minWidth: 70,
-        maxWidth: 70,
-        height: 70,
-        minHeight: 70,
-        maxHeight: 70,
-        x: width - 140,
-        y: height - 140,
+        width: width,
+        minWidth: width,
+        maxWidth: width,
+        height: height,
+        minHeight: height,
+        maxHeight: height,
+        x: x,
+        y: y,
         transparent: true,
         frame: false,
         ...options
@@ -107,33 +121,6 @@ export function createBrowserOtherWindow (options = {}) {
         height: 680,
         ...options
     })
-}
-
-export function createContextMenu (win, modalWin) {
-    return [
-        {
-            label: 'Показать приложение',
-            click: () => {
-                win.show();
-            }
-        },
-        {
-            label: 'Сменить аккаунт',
-            visible: false,
-            click: () => {
-                win.show();
-                win.webContents.send('logout')
-                modalWin.webContents.send('logout')
-            }
-        },
-        {
-            label: 'Выйти из приложения',
-            click: function () {
-                changeIsQuiting(true);
-                app.quit();
-            }
-        }
-    ];
 }
 
 // Сворачиваем в `Tray`

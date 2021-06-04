@@ -1,25 +1,25 @@
 'use strict';
 /* eslint-disable */
 
-import {app, ipcMain, Notification, Tray, Menu, screen, shell} from 'electron';
+import {app, ipcMain, Notification, screen, shell} from 'electron';
 import updateApp from './updater';
-
 app.disableHardwareAcceleration();
 
 import {
   showDevTools,
   isOldWindows,
-  currentVersion,
   isDevelopment,
   icon,
-  trayIcon,
   closeApp,
   changeIsQuiting,
-  createContextMenu,
   createBrowserWindow,
   createBrowserOtherWindow,
   getUrl
 } from './utils';
+
+const Tray = require('./Tray').default;
+const DataStore = require('./DataStore').default;
+const Store = new DataStore()
 
 let mainWindow, childWindow, modalWindow, tray = null;
 
@@ -111,10 +111,12 @@ app.on('activate', () => {
 // У `tray` контекстное меню не реактивная
 // по этому с клиента сообщаю что пользователь авторизован или нет
 // если авторизован то в контексте `tray` показываем кнопку `Cменить аккаунт`
-ipcMain.on('show-logout-btn', (event, args) => {
-  const contextMenu = createContextMenu(mainWindow, modalWindow);
-  contextMenu[1].visible = args;
-  tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
+ipcMain.on('show-logout-btn', async (event, args) => {
+    await tray.changeContextMenu(1, {
+            field: 'visible',
+            value: args
+        })
+    await tray.setContextMenu()
 });
 
 //  Открываем/закрываем модалку
@@ -199,7 +201,13 @@ ipcMain.on('windowMoving', (e, {mouseX, mouseY}) => {
 
 // После перемещение указываем позицую
 ipcMain.on('windowMoved', (e, data) => {
-    // ... тут что нибудь
+
+    // Сохраняем позицию
+    const [mainX, mainY] = mainWindow.getPosition()
+    Store.changePosition({
+        x: mainX,
+        y: mainY
+    })
 });
 
 // Авто-запуск приложение при старте windows
@@ -285,14 +293,8 @@ function createWindow () {
   // *** винде запускается мусорщик, в определенную интервал времени и обновляет `Tray`
   // *** и во время обновление он должен удалить текущую и создать новое
   // *** крч как то так :D если что почитайте  в инете
-  tray = new Tray(trayIcon);
-  tray.setToolTip('gos24.kz — v' + currentVersion);
-
-  // Событие когда кликаем на иконку
-  tray.on('click', () => mainWindow.show());
-
-  // Установливаем меню когда нажимаем ПКМ
-  tray.setContextMenu(Menu.buildFromTemplate(createContextMenu(mainWindow, modalWindow)));
+  tray = new Tray(mainWindow, modalWindow)
+  tray.init()
 
   if (isDevelopment) {
     // Дев тулс показываем только в режиме разработки
