@@ -20,6 +20,7 @@
                 this.$store.commit('SET_USER', data.user);
                 this.$store.commit('STORE_ACCESS_TOKEN', data.accessToken);
                 this.$store.commit('STORE_REFRESH_TOKEN', data.refreshToken);
+                this.$bus.$emit('update-user');
             });
 
             this.$electron.ipcRenderer.send('show-logout-btn', this.$store.getters['isAuth']);

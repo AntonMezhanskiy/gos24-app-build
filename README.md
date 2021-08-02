@@ -1,6 +1,7 @@
 # gos24-electron
 
 > Версии пакетов, менять с осторожностью!
+> Чтоб автообновление стработало надо `New personal access token` c разрешением `Access public repositories`
 
 #### Build Setup
 
