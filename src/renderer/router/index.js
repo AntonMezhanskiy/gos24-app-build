@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '../views/Home.vue';
+import Base1cOldWindowsVersion from '../views/Base1cOldWindowsVersion.vue';
 import HomeForOldWindowsVersion from '../views/HomeForOldWindowsVersion.vue';
 import ContextMenu from '../views/ContextMenu.vue';
 import Login from '../views/Login.vue';
@@ -23,6 +24,14 @@ const routes = [
         component: ContextMenu,
         meta: {
             title: 'Центр уведомлений'
+        }
+    },
+    {
+        path: '/base1c',
+        name: 'Base1cOldWindowsVersion',
+        component: Base1cOldWindowsVersion,
+        meta: {
+            title: 'Мои 1с базы'
         }
     },
     {

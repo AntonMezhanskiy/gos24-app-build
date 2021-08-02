@@ -21,7 +21,7 @@ const Tray = require('./Tray').default;
 const DataStore = require('./DataStore').default;
 const Store = new DataStore()
 
-let mainWindow, childWindow, modalWindow, tray = null;
+let mainWindow, childWindow, modalWindow, base1cWindow, tray = null;
 
 app.on('before-quit', function () {
   changeIsQuiting(true)
@@ -49,7 +49,7 @@ ipcMain.on('close-window', (e, args) => {
   mainWindow.webContents.send('close-window')
 })
 
-// [FIX ME] В разных окнах электорна создается новый экземпляр Vue и между ними нет связи...
+// TODO [FIX ME] В разных окнах электорна создается новый экземпляр Vue и между ними нет связи...
 ipcMain.on('update-client', (e, prefix, data) => {
   [mainWindow, modalWindow, childWindow].forEach(wind => {
     if (wind) {
@@ -57,6 +57,28 @@ ipcMain.on('update-client', (e, prefix, data) => {
     }
   })
 })
+
+ipcMain.on('page-base1c', (event, args) => {
+    base1cWindow = createBrowserOtherWindow({
+        focusable: true,
+    });
+
+    if (isDevelopment) {
+        showDevTools(base1cWindow)
+    }
+
+    // Показываем страницу Авторизации
+    base1cWindow.loadURL(getUrl('/#/base1c', '#base1c'));
+
+    // Унижтожаем окно полностью
+    base1cWindow.on('close',  () => {
+        base1cWindow = null;
+    });
+
+    base1cWindow.once('ready-to-show',()=>{
+        base1cWindow.show()
+    });
+});
 
 // Показываем страницу авторизации
 // с его настройками
@@ -80,7 +102,6 @@ ipcMain.on('page-auth', (event, args) => {
   childWindow.once('ready-to-show',()=>{
     childWindow.show()
   });
-
 });
 
 // Закрываем всех других окон
@@ -88,9 +109,12 @@ ipcMain.on('close-child-window', () => {
   if (childWindow) {
     childWindow.close();
   }
+  if (base1cWindow) {
+      base1cWindow.close();
+  }
 });
 
-// FIX ME
+// TODO FIX ME
 // Пока не понял в какой момент этот метод вызывается,
 // надо проверить вызывается ли этот события,
 // если не вызывается то надо убрать...
@@ -173,7 +197,6 @@ ipcMain.on('windowMoving', (e, {mouseX, mouseY}) => {
             bottom: windwoSize.y > windwoSize.height,
             default: !(windwoSize.x < limitation || windwoSize.x > windwoSize.width || windwoSize.y < limitation || windwoSize.y > windwoSize.height)
         };
-
     // Дальше указываем новую позицию относительно
     // от ограниченных размеров
     let positionNEW = {
@@ -181,8 +204,8 @@ ipcMain.on('windowMoving', (e, {mouseX, mouseY}) => {
         y: 0,
     }
 
-    positionNEW.x = mainX - 260 + 70
-    positionNEW.y = mainY - 410
+    positionNEW.x = mainX - 500 + 70
+    positionNEW.y = mainY - 490
 
     if (position.top) {
         positionNEW.y = mainY + 80
@@ -224,14 +247,14 @@ function MainModal () {
   const height = display.bounds.height;
 
   modalWindow = createBrowserWindow({
-    width: 260,
-    minWidth: 260,
-    maxWidth: 260,
-    height: 400,
-    minHeight: 400,
-    maxHeight: 400,
-    x: width - 330,
-    y: height - 550,
+    width: 500,
+    minWidth: 500,
+    maxWidth: 500,
+    height: 600,
+    minHeight: 600,
+    maxHeight: 600,
+    x: width - 335,
+    y: height - 610,
   });
 
   // Ссылка на Модал
@@ -246,10 +269,10 @@ function MainModal () {
 // создаем главное окно
 function createWindow () {
   // Проверяем в каком ось запущен приложение
-  if (isOldWindows()) {
+  if (!isOldWindows()) {
     mainWindow = createBrowserOtherWindow({
       width: 180,
-      height: 490,
+      height: 600,
       focusable: true,
     });
 

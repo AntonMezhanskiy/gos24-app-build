@@ -5,9 +5,13 @@
                 :data-value="button.name"
                 v-if="button.auth"
                 @click="change(button.type, button.url)"
+                :class="{opacity: activeButton && activeButton !== button.type}"
                 :data-notify-count="button.isNotify && countNotify != null ? countNotify : false">
             <IconSvg :name="button.iconName"/>
         </button>
+        <div class="baza1c" v-show="activeButton">
+          <button type="button" v-for="base in base1c" @click="linkOpenBasePage(base.id)">{{ base.name }}</button>
+        </div>
     </div>
 </template>
 
@@ -18,6 +22,7 @@
         auth: 'auth',
         changeUser: 'change-user',
         link: 'link',
+        base1c: 'base1c',
         collapseApp: 'collapse-app'
     }
     export default {
@@ -66,13 +71,13 @@
                         url: 'https://gos24.kz/support/new',
                         auth: true
                     },
-                    // {
-                    //     name: 'Открыть Базу 1С',
-                    //     iconName: 'contact_the_curator',
-                    //     type: dictionary.link,
-                    //     url: 'https://gos24.kz/base1c/',
-                    //     auth: true
-                    // },
+                    {
+                        name: 'Открыть Базу 1С',
+                        iconName: 'contact_the_curator',
+                        type: dictionary.base1c,
+                        url: 'https://gos24.kz/base-1c/',
+                        auth: true
+                    },
                     {
                         name: 'Открыть портал',
                         iconName: 'home',
@@ -83,6 +88,8 @@
                 ],
                 checked: false,
                 countNotify: 0,
+                base1c: [],
+                activeButton: null,
                 windowPosition: {
                     top: false,
                     left: false,
@@ -110,6 +117,9 @@
             this.$electron.ipcRenderer.on('modal-show', (event, data) => {
                 this.checked = data
             });
+
+            const found = this.items.find(i => i.type === this.dictionary.base1c)
+            if (found) found.name = this.base1c.length > 0 ? 'Мои базы 1с' : found.name
         },
         beforeDestroy () {
             if (this.isAuth) {
@@ -121,6 +131,11 @@
             toggleButtonAuth (type) {
                 const button = this.items.find(b => b.type === this.dictionary.auth)
                 button.auth = type
+            },
+            linkOpenBasePage (slug) {
+                this.$electron.shell.openExternal(`https://gos24.kz/base-1c/${slug}`);
+                this.activeButton = null
+                this.toggle(this.dictionary.base1c)
             },
             toggle (type) {
                 const status = this.checked = !this.checked;
@@ -148,8 +163,17 @@
                 case this.dictionary.auth:
                     this.$electron.ipcRenderer.send('page-auth');
                     break;
+                case this.dictionary.base1c:
+                    if (this.base1c.length > 0) {
+                        this.activeButton = type
+                    } else {
+                        this.$electron.shell.openExternal(data);
+                    }
+                    break;
                 }
-                this.toggle(type)
+                if (this.dictionary.base1c !== type && this.base1c.length === 0) {
+                    this.toggle(type)
+                }
             },
             socketConn (status) {
                 if (status === 'join') {
@@ -209,6 +233,7 @@
 
 <style scoped lang="scss">
 $height: 60px;
+$gray: #f2f2f2;
 $blue: #094380;
 $columns: 7;
 $margin: 70;
@@ -216,7 +241,7 @@ $margin: 70;
         font-size: 20px;
         flex-direction: column;
         position: relative;
-        min-height: 400px;
+        min-height: 480px;
         overflow: hidden;
     }
 
@@ -256,6 +281,9 @@ $margin: 70;
             padding: 10px 15px;
             line-height: initial;
         }
+        &.opacity {
+          opacity: .3 !important;
+        }
         &[data-notify-count]:not([data-notify-count="0"]):after {
             content: attr(data-notify-count);
             position: absolute;
@@ -276,42 +304,49 @@ $margin: 70;
         }
 
         &:hover {
-            background: #f2f2f2;
+            background: $gray;
+            opacity: 1 !important;
             &:before {
-                background: #f2f2f2;
+                background: $gray;
                 color: $blue;
             }
         }
 
-        &:nth-child(2) {
+        @for $i from 1 through $columns {
+          &:nth-child(#{$i}) {
             transition-duration: 180ms;
-        }
-
-        &:nth-child(3) {
-            transition-duration: 180ms;
-        }
-
-        &:nth-child(4) {
-            transition-duration: 180ms;
-        }
-
-        &:nth-child(5) {
-            transition-duration: 180ms;
-        }
-
-        &:nth-child(6) {
-            transition-duration: 180ms;
-        }
-
-        &:nth-child(7) {
-            transition-duration: 180ms;
-        }
-
-        &:nth-child(8) {
-            transition-duration: 180ms;
+          }
         }
     }
+    .baza1c {
+        position: absolute;
+        top: 87px;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        max-height: 393px;
+        overflow-y: auto;
+        width: 240px;
 
+        button {
+            border: 0;
+            background: $blue;
+            margin-bottom: 1rem;
+            padding: 10px 20px;
+            color: #fff;
+            cursor: pointer;
+            text-align: left;
+            min-height: 35px;
+            &:last-child {
+                margin-bottom: 0;
+            }
+            &:hover {
+                background: $gray;
+                color: #000;
+            }
+        }
+    }
     .left {
         .menu-item {
             right: unset;
