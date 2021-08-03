@@ -10,7 +10,7 @@
             <IconSvg :name="button.iconName"/>
         </button>
         <div class="baza1c" v-show="activeButton">
-          <button type="button" v-for="base in base1c" @click="linkOpenBasePage(base.id)">{{ base.name }}</button>
+          <button type="button" v-for="base in base1c" @click="linkOpenBasePage(base.base_url)">{{ base.name }}</button>
         </div>
     </div>
 </template>
@@ -107,6 +107,7 @@
                 this.toggleButtonAuth(false)
                 await this.updateNotifi();
                 await this.socketConn('join');
+                await this.getBase1c()
             });
             this.$bus.$on('changeUser', async () => {
                 await this.socketConn('leave');
@@ -118,8 +119,14 @@
                 this.checked = data
             });
 
-            const found = this.items.find(i => i.type === this.dictionary.base1c)
-            if (found) found.name = this.base1c.length > 0 ? 'Мои базы 1с' : found.name
+            const data = {
+                user: JSON.parse(localStorage.getItem('user')) || null,
+                accessToken: localStorage.getItem('accessToken') || null,
+                refreshToken: localStorage.getItem('refreshToken') || null
+            }
+            if (!this.auth && (data.user && data.accessToken && data.refreshToken)) {
+                this.$electron.ipcRenderer.send('update-client', 'update-user', data);
+            }
         },
         beforeDestroy () {
             if (this.isAuth) {
@@ -128,18 +135,28 @@
             this.$bus.$off('changeUser');
         },
         methods: {
+            async getBase1c () {
+                try {
+                    const response = await this.$axios.get('base/base_1c/')
+                    this.base1c = response
+                    const found = this.items.find(i => i.type === this.dictionary.base1c)
+                    if (found) found.name = this.base1c.length > 0 ? 'Мои базы 1с' : found.name
+                } catch (e) {
+                    console.log(e)
+                }
+            },
             toggleButtonAuth (type) {
                 const button = this.items.find(b => b.type === this.dictionary.auth)
                 button.auth = type
             },
-            linkOpenBasePage (slug) {
-                this.$electron.shell.openExternal(`https://gos24.kz/base-1c/${slug}`);
-                this.activeButton = null
+            linkOpenBasePage (url) {
+                this.$electron.shell.openExternal(url);
                 this.toggle(this.dictionary.base1c)
             },
             toggle (type) {
                 const status = this.checked = !this.checked;
                 this.checked = status;
+                this.activeButton = null;
 
                 if (!status && type !== this.dictionary.auth) {
                     this.$electron.ipcRenderer.send('close-child-window');
@@ -198,6 +215,7 @@
             isAuth () {
                 const auth = this.$store.getters['isAuth'];
                 if (auth) {
+                    this.getBase1c();
                     this.updateNotifi();
                     this.socketConn('join');
                 }

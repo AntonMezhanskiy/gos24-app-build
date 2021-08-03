@@ -269,7 +269,7 @@ function MainModal () {
 // создаем главное окно
 function createWindow () {
   // Проверяем в каком ось запущен приложение
-  if (!isOldWindows()) {
+  if (isOldWindows()) {
     mainWindow = createBrowserOtherWindow({
       width: 180,
       height: 600,

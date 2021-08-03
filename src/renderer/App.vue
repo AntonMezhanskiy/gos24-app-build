@@ -23,7 +23,12 @@
                 this.$bus.$emit('update-user');
             });
 
-            this.$electron.ipcRenderer.send('show-logout-btn', this.$store.getters['isAuth']);
+            this.$electron.ipcRenderer.send('show-logout-btn', this.auth);
+        },
+        computed: {
+            auth () {
+                return this.$store.getters['isAuth']
+            }
         },
         beforeDestroy () {
             console.log('beforeDestroy');
