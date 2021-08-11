@@ -1,7 +1,9 @@
 <template>
     <div class="Base1cOldWindowsVersion">
         <h1>Мои 1с базы</h1>
-        <button type="button" v-for="base in base1c" @click="linkOpenBasePage(base.id)">{{ base.name }}</button>
+        <div>
+            <button type="button" v-for="base in base1c" @click="linkOpenBasePage(base.base_url)">{{ base.name }}</button>
+        </div>
     </div>
 </template>
 
@@ -10,15 +12,23 @@ export default {
     name: 'Base1cOldWindowsVersion',
     data () {
         return {
-            base1c: [
-                {id: 1, name: 'dsfsafawes'}
-            ]
+            base1c: []
         }
     },
+    created () {
+        this.getBase1c()
+    },
     methods: {
-        linkOpenBasePage (slug) {
-            this.$electron.shell.openExternal(`https://gos24.kz/base-1c/${slug}`);
-            this.activeButton = null
+        async getBase1c () {
+            try {
+                const response = await this.$axios.get('base/base_1c/')
+                this.base1c = response.data
+            } catch (e) {
+                console.log(e)
+            }
+        },
+        linkOpenBasePage (url) {
+            this.$electron.shell.openExternal(url);
         }
     }
 }
@@ -36,10 +46,15 @@ $blue: #094380;
         font-size: 26px;
         padding: 10px 15px;
     }
+    div {
+        padding: 0 15px;
+    }
     button {
+        display: block;
+        width: 100%;
         border: 0;
         border-bottom: 1px solid #000000;
-        margin-bottom: 1rem;
+        margin-bottom: 10px;
         background: transparent;
         padding: 10px 15px;
         cursor: pointer;

@@ -95,9 +95,17 @@
                 this.toggleButtonAuth(false)
                 await this.updateNotifi();
                 await this.socketConn('join');
+                await this.getBase1c()
             });
-            const found = this.items.find(i => i.type === this.dictionary.base1c)
-            if (found) found.name = this.base1c.length > 0 ? 'Мои базы 1с' : found.name
+
+            const data = {
+                user: JSON.parse(localStorage.getItem('user')) || null,
+                accessToken: localStorage.getItem('accessToken') || null,
+                refreshToken: localStorage.getItem('refreshToken') || null
+            }
+            if (!this.auth && (data.user && data.accessToken && data.refreshToken)) {
+                this.$electron.ipcRenderer.send('update-client', 'update-user', data);
+            }
         },
         beforeDestroy () {
             if (this.isAuth) {
@@ -106,6 +114,17 @@
             this.$bus.$off('changeUser')
         },
         methods: {
+            async getBase1c () {
+                try {
+                    const response = await this.$axios.get('base/base_1c/')
+                    this.base1c = response.data
+                    this.base1c = [1, 2]
+                    const found = this.items.find(i => i.type === this.dictionary.base1c)
+                    if (found) found.name = this.base1c.length > 0 ? 'Мои базы 1с' : found.name
+                } catch (e) {
+                    console.log(e)
+                }
+            },
             toggleButtonAuth (type) {
                 const button = this.items.find(b => b.type === this.dictionary.auth)
                 button.auth = type
@@ -166,6 +185,7 @@
                 const auth = this.$store.getters['isAuth'];
                 if (auth) {
                     this.updateNotifi();
+                    this.getBase1c();
                     this.socketConn('join');
                 }
                 this.toggleButtonAuth(!auth)

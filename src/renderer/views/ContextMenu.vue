@@ -138,7 +138,7 @@
             async getBase1c () {
                 try {
                     const response = await this.$axios.get('base/base_1c/')
-                    this.base1c = response
+                    this.base1c = response.data
                     const found = this.items.find(i => i.type === this.dictionary.base1c)
                     if (found) found.name = this.base1c.length > 0 ? 'Мои базы 1с' : found.name
                 } catch (e) {
